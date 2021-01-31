@@ -1,0 +1,17 @@
+channels:
+  - conda-forge
+dependencies:
+  - netcdf4
+  - pytorch::pytorch
+  - matplotlib
+  - dask
+  - bottleneck
+  - seaborn
+  - jupyter
+  - xarray
+  - python=3.7
+  - hdf5
+  - cudatoolkit=10.2
+  - rasterio
+  - tqdm
+  - scikit-learn

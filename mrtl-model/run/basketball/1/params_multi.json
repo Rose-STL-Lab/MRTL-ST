@@ -1,0 +1,12 @@
+{
+    "stop_cond": "val_loss_increase",
+    "batch_size": 1024,
+    "sigma": 0.05,
+    "K": 20,
+    "step_size": 1,
+    "gamma": 0.95,
+    "full_lr": 0.005,
+    "full_reg": 0.05,
+    "low_lr": 0.03,
+    "low_reg": 0.3
+}
