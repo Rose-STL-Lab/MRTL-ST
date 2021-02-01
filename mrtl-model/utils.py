@@ -265,6 +265,20 @@ def remove_season(data, standardize=True, mean=None, std=None):
 
     return data, mean, std
 
+# Calculates the distance between (x,y) and (xRef,yRef)
+def calculate_distance(x, y, xRef, yRef):
+    # Applies the Pythagorean Theorem to find the distance between the two points
+    dist = np.sqrt(np.power(x - xRef, 2) + np.power(y - yRef, 2))
+    return dist     # Returns the calculated distance
+
+# Calculates the angle between (x,y) and (xRef,yRef)
+def calculate_angle(x, y, xRef, yRef):
+    # Calculates the distance
+    dist = calculate_distance(x, y, xRef, yRef)
+
+    # x - xRef = dist * sin(angle)
+    angle = np.arcsin((x - xRef)/dist)
+    return angle    # Returns the calculated angle
 
 def normalize(data,
               old_min=None,
