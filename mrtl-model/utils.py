@@ -271,13 +271,14 @@ def calculate_distance(x, y, xRef, yRef):
     dist = np.sqrt(np.power(x - xRef, 2) + np.power(y - yRef, 2))
     return dist     # Returns the calculated distance
 
-# Calculates the angle between (x,y) and (xRef,yRef)
+# Calculates the angle between (x,y) and (xRef,yRef). 0º for the right corner,
+# 90º for the front of the basket, 180º for the left corner.
 def calculate_angle(x, y, xRef, yRef):
     # Calculates the distance
     dist = calculate_distance(x, y, xRef, yRef)
 
-    # x - xRef = dist * sin(angle)
-    angle = np.arcsin((x - xRef)/dist)
+    # yRef - y = dist * cos(angle)
+    angle = np.arccos((yRef - y)/dist)
     return angle    # Returns the calculated angle
 
 def normalize(data,
