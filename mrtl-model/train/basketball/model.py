@@ -6,7 +6,9 @@ class DataParallelPassthrough(torch.nn.DataParallel):
         try:
             return super().__getattr__(name)
         except AttributeError:
-            return getattr(self.module, name)
+            return getattr(self, name)
+            # return getattr(self.module, name)
+
 
 
 class Full(torch.nn.Module):
@@ -22,13 +24,44 @@ class Full(torch.nn.Module):
 
     def forward(self, a, bh_pos, def_pos):
         # Only some defenders in defender box
-#         print(self.W[a.long(), bh_pos[:, 0].long(),
-#                                  bh_pos[:, 1].long(), :, :].size)
-#         print(def_pos.float().size)
+#         print(self.W[a.long(), bh_pos[:, 0].long(),bh_pos[:, 1].long(), :, :].size)
+#         print(self.W.size())
+#         print((a.long(), bh_pos[:, 0].long(),bh_pos[:, 1].long()))
+
+
+        #print("a_dims")
+        #print(self.a_dims)
+
+        (temp1, temp2) = (bh_pos[:, 0].long(), bh_pos[:, 1].long())
+        
+        # print("bh_pos[:, 0].long(): " + str(bh_pos[:, 0].long()))
+        # print("bh_pos[:, 0][0].long(): " + str(bh_pos[:, 0][0].long()))
+        # print("self.W.size()[1]: " + str(self.W.size()[1]))
+
+        # if bh_pos[:, 0].long() >= self.W.size()[1]:
+        #     temp1 = self.W.size()[1]-1
+        # if bh_pos[:, 1].long() >= self.W.size()[2]:
+        #     temp2 = self.W.size()[2]-1
+#         print('test')
+        one1 = torch.ones_like(temp1) * (self.W.size()[1]-1)
+        temp1 = torch.where(temp1 >= self.W.size()[1], one1, temp1)
+        one2 = torch.ones_like(temp2) * (self.W.size()[2]-1)
+        temp2 = torch.where(temp2 >= self.W.size()[2], one2, temp2)
+#         print(temp1,temp2)
+#         print(self.W.size())
+#         print(a.long())
+        
+            
+#         print("Dim match")
+#         print(self.W[a.long(), temp1,temp2, :, :].size())
+#         print(def_pos.float().size())
+
+#         print("End")
+            
+
 
         out = torch.einsum(
-            'bcd,bcd->b', self.W[a.long(), bh_pos[:, 0].long(),
-                                 bh_pos[:, 1].long(), :, :], def_pos.float())
+            'bcd,bcd->b', self.W[a.long(), temp1,temp2, :, :], def_pos.float())
         return out.add_(self.b[a.long()])
 
 
@@ -52,14 +85,34 @@ class Low(torch.nn.Module):
 
     def forward(self, a, bh_pos, def_pos):
 #         print("Dims")
-#         print(self.A.size())
+#         print(self.A[a.long(), :].size())
+#         print(bh_pos[:, 0].long())
+#         print(bh_pos[:, 1].long())
+        (temp1, temp2) = (bh_pos[:, 0].long(), bh_pos[:, 1].long())
+        # if bh_pos[:, 0].long() >= self.B.size()[0]:
+        #     temp1 = self.B.size()[0]-1
+        # if bh_pos[:, 1].long() >= self.B.size()[1]:
+        #     temp2 = self.B.size()[1]-1
+
+#         one2 = torch.ones_like(temp2) * self.W.size()[2]-1
+#         temp2 = torch.where(temp2 > self.W.size()[2], one2, temp2)
+        one1 = torch.ones_like(temp1) * (self.B.size()[0]-1)
+        temp1 = torch.where(temp1 >= self.B.size()[0], one1, temp1)
+        one2 = torch.ones_like(temp2) * (self.B.size()[1]-1)
+        temp2 = torch.where(temp2 >= self.B.size()[1], one2, temp2)
+            
 #         print(self.B.size())
+
+#         print(self.B[temp1, temp2, :])
+#         print(self.B[temp1,temp2, :].size())
 #         print(def_pos.size())
 #         print(self.C.size())
+#         print(torch.einsum('bcd,cde->be', def_pos.float(), self.C).size())
 #         print("End")
+   
         # Tensor multiply def_pos and self.C to get sum for all defenders, and then sum over latent factors
         out = (self.A[a.long(), :] *
-               self.B[bh_pos[:, 0].long(), bh_pos[:, 1].long(), :] *
+               self.B[temp1,temp2, :] *
                torch.einsum('bcd,cde->be', def_pos.float(), self.C)).sum(1)
         
         return out.add_(self.b[a.long()])
