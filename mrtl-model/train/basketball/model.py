@@ -12,17 +12,18 @@ class DataParallelPassthrough(torch.nn.DataParallel):
 
 
 class Full(torch.nn.Module):
-    def __init__(self, a_dims, b_dims, c_dims, counts):
+    def __init__(self, a_dims, t_dims, b_dims, c_dims, counts):
         super().__init__()
         self.a_dims = a_dims
+        self.t_dims = t_dims
         self.b_dims = b_dims
         self.c_dims = c_dims
-        self.W = torch.nn.Parameter(torch.randn((a_dims, *b_dims, *c_dims)),
+        self.W = torch.nn.Parameter(torch.randn((a_dims, t_dims, *b_dims, *c_dims)),
                                     requires_grad=True)
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
-        self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True)
+        self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) #######
 
-    def forward(self, a, bh_pos, def_pos):
+    def forward(self, a, time, bh_pos, def_pos):
         # Only some defenders in defender box
 #         print(self.W[a.long(), bh_pos[:, 0].long(),bh_pos[:, 1].long(), :, :].size)
 #         print(self.W.size())
@@ -59,10 +60,13 @@ class Full(torch.nn.Module):
 #         print("End")
             
 
+#         print("Dim match")
+#         print('first', self.W[a.long(), time.long(), temp1,temp2, :, :].size())
+#         print('second', def_pos.float().size())
 
         out = torch.einsum(
-            'bcd,bcd->b', self.W[a.long(), temp1,temp2, :, :], def_pos.float())
-        return out.add_(self.b[a.long()])
+            'bcd,bcd->b', self.W[a.long(), time.long(), temp1,temp2, :, :], def_pos.float())
+        return out.add_(self.b[a.long()]) #######
 
 
 class Low(torch.nn.Module):
@@ -81,7 +85,7 @@ class Low(torch.nn.Module):
                                     requires_grad=True)
 
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
-        self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True)
+        self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) 
 
     def forward(self, a, bh_pos, def_pos):
 #         print("Dims")
@@ -115,7 +119,7 @@ class Low(torch.nn.Module):
                self.B[temp1,temp2, :] *
                torch.einsum('bcd,cde->be', def_pos.float(), self.C)).sum(1)
         
-        return out.add_(self.b[a.long()])
+        return out.add_(self.b[a.long()]) 
 
     def constrain(self):
         # Clamp weights

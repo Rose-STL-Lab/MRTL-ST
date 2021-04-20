@@ -15,9 +15,9 @@ gamma=0.95
 stop_cond="val_loss_increase"
 
 # Multi
-multi_full_lr=5e-3
+multi_full_lr=5e-4
 multi_full_reg=5e-2
-multi_low_lr=3e-2
+multi_low_lr=3e-3
 multi_low_reg=3e-1
 
 # Fixed
@@ -34,7 +34,7 @@ num_trials=1
 
 for ((i = 1; i <= num_trials; i++)); do
   echo "Trial ${i}: Prepare"
-  python3 "prepare_bball.py" --root-dir "${root_dir}/${i}" --data-dir "${data_dir}"
+  # python3 "prepare_bball.py" --root-dir "${root_dir}/${i}" --data-dir "${data_dir}"
   # echo "Trial ${i}: Random Initialization"
   #   python3 "run_bball.py" --root-dir "${root_dir}/${i}/rand" --data-dir "${data_dir}" --type "rand" --stop-cond "${stop_cond}" \
   # --batch-size "${batch_size}" --sigma "${sigma}" --K "${K}" --step-size "${step_size}" --gamma "${gamma}" \

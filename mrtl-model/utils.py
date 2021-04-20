@@ -12,6 +12,7 @@ import torch
 import torch.utils.data
 import xarray as xr
 from cp_als import unfold
+from config import config
 
 
 def set_logger(logger, log_path=None):
@@ -130,15 +131,15 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         W_size = model.W.size()
 
         # Court dimension
-        W_unfold = unfold(model.W.view(W_size[0], W_size[1] * W_size[2],
-                                       W_size[3], W_size[4]),
+        W_unfold = unfold(model.W.view(W_size[0] * W_size[1], W_size[2] * W_size[3],
+                                       W_size[4], W_size[5]),
                           mode=1).contiguous()
         reg.add_((K_B * pdist(W_unfold)).sum() /
                  (torch.numel(model.W) * np.prod(model.b_dims)))
 
         # Defender position
-        W_unfold = unfold(model.W.view(W_size[0], W_size[1], W_size[2],
-                                       W_size[3] * W_size[4]),
+        W_unfold = unfold(model.W.view(W_size[0] * W_size[1], W_size[2], W_size[3],
+                                       W_size[4] * W_size[5]),
                           mode=3).contiguous()
         reg.add_((K_C * pdist(W_unfold)).sum() /
                  (torch.numel(model.W) * np.prod(model.c_dims)))
@@ -182,8 +183,8 @@ def contract_pos(T, dim):
 def finegrain(T, new_shape, start_dim, mode='nearest'):
     old_shape = T.shape
 
-    assert T.ndim in [3, 5], "T.ndim must be 3 or 5"
-    assert start_dim in [0, 1, 3], "start_dim must be 0, 1, or 3"
+    assert T.ndim in [4, 6], "T.ndim must be 3 or 5"
+    assert start_dim in [0, 2, 4], "start_dim must be 0, 2, or 4"
 
     # Calculate scale
     scale = float(new_shape[0]) / old_shape[start_dim]
@@ -192,18 +193,18 @@ def finegrain(T, new_shape, start_dim, mode='nearest'):
         old_shape[start_dim + 1]), "Scale is not the same across axes."
 
     new = None
-    if T.ndim == 5:
+    if T.ndim == 6:
         old = T.clone().detach().permute(
-            0, 4 - start_dim, 5 - start_dim, start_dim, start_dim + 1).view(
-                old_shape[0],
-                old_shape[4 - start_dim] * old_shape[5 - start_dim],
+            0, 1, 6 - start_dim, 7 - start_dim, start_dim, start_dim + 1).view(
+                old_shape[0] * old_shape[1],
+                old_shape[6 - start_dim] * old_shape[7 - start_dim],
                 old_shape[start_dim], old_shape[start_dim + 1])
         interp = torch.nn.functional.interpolate(old,
                                                  scale_factor=scale,
                                                  mode=mode)
-        new = interp.view(old_shape[0], old_shape[4 - start_dim],
-                          old_shape[5 - start_dim],
-                          *new_shape).permute(0, 4 - start_dim, 5 - start_dim,
+        new = interp.view(old_shape[0], old_shape[1], old_shape[6 - start_dim],
+                          old_shape[7 - start_dim],
+                          *new_shape).permute(0, 1, 6 - start_dim, 7 - start_dim,
                                               start_dim, start_dim + 1)
     elif T.ndim == 3:
         old = T.clone().detach().permute(2, 0, 1).unsqueeze(0)
@@ -214,6 +215,41 @@ def finegrain(T, new_shape, start_dim, mode='nearest'):
 
     return new
 
+def finegrain_time_full(T, new_time_dim, mode='nearest'):
+    old_shape = T.shape # T.shape = [a, t, [b1, b2], [c1, c2]] 
+    start_b = config.b_dims[0]
+    start_c = config.c_dims[0]
+    
+    old_c = T.clone().detach().view(
+                old_shape[0],
+                old_shape[1],
+                old_shape[2] * old_shape[3], 
+                old_shape[4], old_shape[5]) # old_c.shape = [a, t, [b1 * b2], [c1, c2]]
+    interp_c = torch.nn.functional.interpolate(old_c,
+                   size= (old_shape[2] * old_shape[3], start_c[0], start_c[1]),
+                   mode= mode) # interp_c.shape = [a, t, [b1 * b2], [start_c1, start_c2]]
+    new_c = interp_c.view(
+                old_shape[0],
+                old_shape[1],
+                old_shape[2], old_shape[3], 
+                start_c[0], start_c[1]) # new_c.shape = [a, t, [b1, b2], [start_c1, start_c2]]
+    
+    old_tb = new_c.permute(0, 4, 5, 1, 2, 3).view( # old_tb.shape = [a, [start_c1, start_c2], t, [b1, b2]]
+                old_shape[0],
+                start_c[0] * start_c[1],
+                old_shape[1],
+                old_shape[2], old_shape[3]) # old_tb.shape = [a, [start_c1 * start_c2], t, [b1, b2]]
+    interp_tb = torch.nn.functional.interpolate(old_tb, 
+                    size= (new_time_dim, start_b[0], start_b[1]),
+                    mode= mode) # interp_tb.shape = [a, [start_c1 * start_c2], new_t, [start_b1, start_b2]] 
+    new_tb = interp_tb.view(
+                old_shape[0],
+                start_c[0], start_c[1],
+                new_time_dim,
+                start_b[0], start_b[1]).permute(0, 3, 4, 5, 1, 2) # new_tb.shape = [a, new_t, [start_b1, start_b2], [start_c1, start_c2]]
+            
+    return new_tb
+    
 
 # Source: https://github.com/ktcarr/salinity-corn-yields/tree/master/mrtl
 # def plot_setup(plot_range=[-125.25, -66, 22.5, 50],

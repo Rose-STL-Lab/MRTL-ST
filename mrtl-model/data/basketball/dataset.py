@@ -18,7 +18,7 @@ class BballRawDataset(torch.utils.data.Dataset):
         """
 
         # Load data
-        # cols = ['team_no', 'possession_no', 'teamID_A', 'teamID_B', 'timestamps', 'a', 'bh_ID', 'bh_x', 'bh_y',
+        # cols = ['team_no', 'possession_no', 'teamID_A', 'teamID_B', 'timestamps', 'quarter', 'a', 'bh_ID', 'bh_x', 'bh_y',
         #         'def1_x', 'def1_y', 'def2_x', 'def2_y', 'def3_x', 'def3_y', 'def4_x', 'def4_y', 'def5_x', 'def5_y',
         #         'def1_ID', 'def2_ID', 'def3_ID', 'def4_ID', 'def5_ID', 'shoot_label']
         self.data = np.load(fn, allow_pickle=True)
@@ -27,10 +27,16 @@ class BballRawDataset(torch.utils.data.Dataset):
         self.a_dims = len(np.unique(self.data.loc[:, 'a']))
         self.b_dims = None
         self.c_dims = None
+        # T
+        self.t_dims = None
+        # T'
 
         self.a = self.data.loc[:, 'a'].astype(np.int16).to_numpy()
         self.bh_pos = None
         self.def_pos = None
+        # T
+        self.time = None
+        # T'
         self.y = self.data.loc[:, 'shoot_label'].astype(np.uint8).to_numpy()
 
     def calculate_pos(self, b_dims, c_dims):
@@ -68,10 +74,18 @@ class BballRawDataset(torch.utils.data.Dataset):
                          1)[:, :self.c_dims[0], :self.c_dims[1]]
 
         self.def_pos = mask.numpy().astype(np.uint8)
+        
+    # T
+    def calculate_time(self, t_dims):
+        self.t_dims = t_dims
+        scale_time = config.t_dims[-1] / self.t_dims
+        # Scale time
+        self.time = (self.data.loc[:, 'quarter'] / scale_time).astype(np.uint8).to_numpy()
+    # T'
 
     def __len__(self):
         return self.data.shape[0]
 
     def __getitem__(self, idx):
-        return self.a[idx], self.bh_pos[idx, :], self.def_pos[
-            idx, :, :], self.y[idx]
+        return self.a[idx], self.time[idx], self.bh_pos[
+            idx, :], self.def_pos[idx, :, :], self.y[idx]

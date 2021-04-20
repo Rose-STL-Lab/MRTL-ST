@@ -4,6 +4,7 @@ import time
 from math import ceil
 
 import torch
+import numpy as np
 
 import utils
 from config import config
@@ -65,10 +66,11 @@ class BasketballMulti:
 
     def init_full_model(self, train_set):
         counts = utils.class_counts(train_set)
-        self.dims = [train_set.b_dims, train_set.c_dims]
-
-        self.model = model.Full(train_set.a_dims, train_set.b_dims,
-                                train_set.c_dims, counts)
+        self.dims = [train_set.b_dims, train_set.c_dims] #######
+        self.time_dim = train_set.t_dims
+        
+        self.model = model.Full(train_set.a_dims, train_set.t_dims,
+                                train_set.b_dims, train_set.c_dims, counts)
         if torch.cuda.device_count() > 1:
             logger.info(f'Using {torch.cuda.device_count()} GPUs')
             self.model = DataParallelPassthrough(self.model)
@@ -81,11 +83,12 @@ class BasketballMulti:
             torch.zeros_like(self.model.W.cpu(),
                              dtype=torch.float32).to(self.device))
 
-        self.scale = (train_set.b_dims[1] / 5.) * (train_set.c_dims[0] / 6.)
+        self.scale = (train_set.b_dims[1] / 5.) * (train_set.c_dims[0] / 6.) ########
 
     def init_low_model(self, train_set, K):
         counts = utils.class_counts(train_set)
         self.dims = [train_set.b_dims, train_set.c_dims]
+        
 
         self.model = model.Low(train_set.a_dims, train_set.b_dims,
                                train_set.c_dims, K, counts)
@@ -141,12 +144,25 @@ class BasketballMulti:
 #         print(type(train_set.data.dtypes.dtypes))
 
 
+#         print('################################')
+#         print('train_set.a', train_set.a)
+#         print('train_set.time', train_set.time)
+#         print('train_set.bh_pos', train_set.bh_pos)
+#         print('train_set.def_pos', train_set.def_pos)
+#         print('train_set.y', train_set.y, len(train_set.y), np.count_nonzero(train_set.y == 1))
+#         print('################################')
+        
         # Pos_weight
         self.train_loader = torch.utils.data.DataLoader(
             train_set,
             batch_size=self.params['batch_size'],
             shuffle=True,
             num_workers=config.num_workers)
+        
+        #Print statement for testing
+#         for i in enumerate(self.train_loader):
+#             print(i)
+#             break
 
         self.val_loader = torch.utils.data.DataLoader(
             val_set,
@@ -165,9 +181,9 @@ class BasketballMulti:
             pos_weight=torch.tensor(counts[0] / counts[1]))
 
     def train_and_evaluate(self, save_dir=None):
-        logger.info('TRAIN BEGIN | {0}: {1},{2},{3}'.format(
-            type(self.model).__name__, self.model.a_dims, self.dims[0],
-            self.dims[1]))
+        logger.info('TRAIN BEGIN | {0}: {1},{2},{3}, {4}'.format(
+            type(self.model).__name__, self.model.a_dims, self.model.t_dims, 
+            self.dims[0], self.dims[1]))
         logger.info('TRAIN | Optim: {0}, params:{1}'.format(
             type(self.optimizer).__name__, self.params))
         logger.info('TRAIN | Nonneg:{0}'.format(
@@ -210,6 +226,7 @@ class BasketballMulti:
                     os.path.join(
                         save_dir, "model_{0}_{1},{2}_epoch{3}.pt".format(
                             type(self.model).__name__.lower(),
+                            str(self.time_dim),
                             utils.size_to_str(self.dims[0]),
                             utils.size_to_str(self.dims[1]), epochs)))
 
@@ -231,6 +248,7 @@ class BasketballMulti:
                         os.path.join(
                             save_dir, "model_{0}_{1},{2}_best.pt".format(
                                 type(self.model).__name__.lower(),
+                                str(self.time_dim),
                                 utils.size_to_str(self.dims[0]),
                                 utils.size_to_str(self.dims[1]))))
 
@@ -262,8 +280,8 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.dims[0],
-                                self.dims[1], epochs,
+                                type(self.model).__name__, self.time_dim, 
+                                self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
                     else:
@@ -274,8 +292,8 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.dims[0],
-                                self.dims[1], epochs,
+                                type(self.model).__name__, self.time_dim,
+                                self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
                     else:
@@ -286,8 +304,8 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.dims[0],
-                                self.dims[1], epochs,
+                                type(self.model).__name__, self.time_dim, 
+                                self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
                     else:
@@ -298,8 +316,8 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.dims[0],
-                                self.dims[1], epochs,
+                                type(self.model).__name__, self.time_dim, 
+                                self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
                     else:
@@ -379,6 +397,7 @@ class BasketballMulti:
                 os.path.join(
                     save_dir, "multi_{0}_{1},{2}.pt".format(
                         type(self.model).__name__.lower(),
+                        str(self.time_dim),
                         utils.size_to_str(self.dims[0]),
                         utils.size_to_str(self.dims[1]))))
 
@@ -397,8 +416,11 @@ class BasketballMulti:
             self.gradients[i].zero_()
 
         self.model.train()
-        for i, (a, bh_pos, def_pos, y) in enumerate(self.train_loader):
+        for i, (a, t, bh_pos, def_pos, y) in enumerate(self.train_loader):
             a = a.to(self.device)
+            # T
+            t = t.to(self.device)
+            # T'
             bh_pos = bh_pos.to(self.device)
             def_pos = def_pos.to(self.device)
             y = y.to(self.device)
@@ -407,7 +429,7 @@ class BasketballMulti:
             self.optimizer.zero_grad()
 
             # Forward pass
-            outputs = self.model(a, bh_pos, def_pos)
+            outputs = self.model(a, t, bh_pos, def_pos)
 
             # Compute loss
             loss = self.loss_fn(outputs, y.float())
@@ -493,13 +515,14 @@ class BasketballMulti:
 
         self.model.eval()
         with torch.no_grad():
-            for i, (a, bh_pos, def_pos, y) in enumerate(self.val_loader):
+            for i, (a, t, bh_pos, def_pos, y) in enumerate(self.val_loader):
                 a = a.to(self.device)
+                t = t.to(self.device)
                 bh_pos = bh_pos.to(self.device)
                 def_pos = def_pos.to(self.device)
                 y = y.to(self.device)
 
-                outputs = self.model(a, bh_pos, def_pos)
+                outputs = self.model(a, t, bh_pos, def_pos)
 
                 # Compute loss
                 loss = self.loss_fn(outputs, y.float())
@@ -592,13 +615,14 @@ class BasketballMulti:
 
         self.model.eval()
         with torch.no_grad():
-            for i, (a, bh_pos, def_pos, y) in enumerate(test_loader):
+            for i, (a, t, bh_pos, def_pos, y) in enumerate(test_loader):
                 a = a.to(self.device)
+                t = t.to(self.device)
                 bh_pos = bh_pos.to(self.device)
                 def_pos = def_pos.to(self.device)
                 y = y.to(self.device)
 
-                outputs = self.model(a, bh_pos, def_pos)
+                outputs = self.model(a, t, bh_pos, def_pos)
 
                 # Update confusion matrix
                 preds = (outputs > self.decision_threshold).bool()
