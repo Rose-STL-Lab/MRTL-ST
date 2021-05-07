@@ -70,14 +70,17 @@ class Full(torch.nn.Module):
 
 
 class Low(torch.nn.Module):
-    def __init__(self, a_dims, b_dims, c_dims, K, counts):
+    def __init__(self, a_dims, t_dims, b_dims, c_dims, K, counts):
         super().__init__()
         self.a_dims = a_dims
+        self.t_dims = t_dims
         self.b_dims = b_dims
         self.c_dims = c_dims
         self.K = K
 
         self.A = torch.nn.Parameter(torch.randn((a_dims, K)),
+                                    requires_grad=True)
+        self.T = torch.nn.Parameter(torch.randn((t_dims, K)),
                                     requires_grad=True)
         self.B = torch.nn.Parameter(torch.randn(*b_dims, K),
                                     requires_grad=True)
@@ -85,9 +88,9 @@ class Low(torch.nn.Module):
                                     requires_grad=True)
 
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
-        self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) 
+        self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) #########
 
-    def forward(self, a, bh_pos, def_pos):
+    def forward(self, a, time, bh_pos, def_pos):
 #         print("Dims")
 #         print(self.A[a.long(), :].size())
 #         print(bh_pos[:, 0].long())
@@ -104,6 +107,26 @@ class Low(torch.nn.Module):
         temp1 = torch.where(temp1 >= self.B.size()[0], one1, temp1)
         one2 = torch.ones_like(temp2) * (self.B.size()[1]-1)
         temp2 = torch.where(temp2 >= self.B.size()[1], one2, temp2)
+
+        
+#         print('temp1', temp1.shape)
+#         print('temp2', temp2.shape)
+#         print('self.A[a.long(), :]', self.A[a.long(), :].shape)
+#         print('self.B[temp1,temp2, :]', self.B[temp1,temp2, :].shape)
+#         print("torch.einsum('bcd,cde->be', def_pos.float(), self.C)", torch.einsum('bcd,cde->be', def_pos.float(), self.C).shape)
+        
+            
+#         print("Dim match")
+#         print(self.W[a.long(), temp1,temp2, :, :].size())
+#         print(def_pos.float().size())
+
+#         print("End")
+            
+
+#         print("Dim match")
+#         print('first', self.W[a.long(), time.long(), temp1,temp2, :, :].size())
+#         print('second', def_pos.float().size())
+        
             
 #         print(self.B.size())
 
@@ -118,6 +141,9 @@ class Low(torch.nn.Module):
         out = (self.A[a.long(), :] *
                self.B[temp1,temp2, :] *
                torch.einsum('bcd,cde->be', def_pos.float(), self.C)).sum(1)
+        
+#         print('out', out.shape)
+#         print('out.add_(self.b[a.long()])', out.add_(self.b[a.long()]).shape)
         
         return out.add_(self.b[a.long()]) 
 

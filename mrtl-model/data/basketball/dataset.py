@@ -67,8 +67,16 @@ class BballRawDataset(torch.utils.data.Dataset):
         mask = torch.zeros(self.data.shape[0],
                            (self.c_dims[0] + 1) * (self.c_dims[1] + 1),
                            dtype=int)
-        mask.scatter_add_(1,
-                          torch.from_numpy(def_pos).long(),
+        
+        print('mask', mask.shape)
+        print('1st param.shape', torch.from_numpy(def_pos).long().shape)
+        print('1st param', torch.from_numpy(def_pos).long())
+        print('2nd param.shape') 
+        print(torch.ones_like(mask).shape)
+        print('idk how we r still fine')
+        
+        mask.scatter_add_(1, 
+                          torch.from_numpy(def_pos).long(), 
                           torch.ones_like(mask))
         mask = mask.view(-1, self.c_dims[0] + 1, self.c_dims[1] +
                          1)[:, :self.c_dims[0], :self.c_dims[1]]

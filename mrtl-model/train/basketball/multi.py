@@ -88,10 +88,10 @@ class BasketballMulti:
     def init_low_model(self, train_set, K):
         counts = utils.class_counts(train_set)
         self.dims = [train_set.b_dims, train_set.c_dims]
-        
+        self.time_dim = train_set.t_dims
 
-        self.model = model.Low(train_set.a_dims, train_set.b_dims,
-                               train_set.c_dims, K, counts)
+        self.model = model.Low(train_set.a_dims, train_set.t_dims,
+                               train_set.b_dims, train_set.c_dims, K, counts)
         if torch.cuda.device_count() > 1:
             logger.info(f'Using {torch.cuda.device_count()} GPUs')
             self.model = DataParallelPassthrough(self.model)
@@ -101,6 +101,9 @@ class BasketballMulti:
             torch.zeros_like(self.model.A,
                              dtype=torch.float32).to(self.device))
         self.accum_gradients.append(
+            torch.zeros_like(self.model.T,
+                             dtype=torch.float32).to(self.device))
+        self.accum_gradients.append(
             torch.zeros_like(self.model.B,
                              dtype=torch.float32).to(self.device))
         self.accum_gradients.append(
@@ -110,13 +113,16 @@ class BasketballMulti:
             torch.zeros_like(self.model.A,
                              dtype=torch.float32).to(self.device))
         self.gradients.append(
+            torch.zeros_like(self.model.T,
+                             dtype=torch.float32).to(self.device))
+        self.gradients.append(
             torch.zeros_like(self.model.B,
                              dtype=torch.float32).to(self.device))
         self.gradients.append(
             torch.zeros_like(self.model.C,
                              dtype=torch.float32).to(self.device))
 
-        self.scale = (train_set.b_dims[1] / 5.) * (train_set.c_dims[0] / 6.)
+        self.scale = (train_set.b_dims[1] / 5.) * (train_set.c_dims[0] / 6.) ###########
 
     def init_params(self, **kwargs):
         self.params = kwargs.copy()

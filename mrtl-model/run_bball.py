@@ -5,6 +5,7 @@ import logging
 import os
 
 import torch
+import math
 
 import utils
 from config import config
@@ -117,37 +118,108 @@ test_set = BballRawDataset(os.path.join(args.data_dir, config.fn_test))
 
 if args.type == 'multi' or args.type == 'fixed':
     
-    for t in results['time_dims'][0:results['low_start_time_idx']]:
-        train_set.calculate_time(t)
-        val_set.calculate_time(t)
-        test_set.calculate_time(t)
+#   for t in results['time_dims'][0:results['low_start_time_idx']]:
+    t = results['time_dims'][0]
     
-        t_str = str(t)
+    train_set.calculate_time(t)
+    val_set.calculate_time(t)
+    test_set.calculate_time(t)
     
-        # Full-rank first resolution
-        b = results['dims'][0][0]
-        c = results['dims'][0][1]
-        # T
-        # t = results['time_dims'][0]
-        # T'
+    t_str = str(t)
+
+    # Full-rank first resolution
+    b = results['dims'][0][0]
+    c = results['dims'][0][1]
+    # T
+    # t = results['time_dims'][0]
+    # T'
+    b_str = utils.size_to_str(b)
+    c_str = utils.size_to_str(c)
+    # T
+    t_str = str(t)
+    # T'
+    train_set.calculate_pos(b, c)
+    val_set.calculate_pos(b, c)
+    # T
+    # train_set.calculate_time(t)
+    # val_set.calculate_time(t)
+    # T'
+
+    # Train
+    multi = BasketballMulti(device)
+    multi.init_full_model(train_set)
+    hyper['lr'] = params['full_lr']
+    hyper['reg_coeff'] = params['full_reg']
+    hyper['stop_threshold'] = params.get('full_stop_threshold')
+    multi.init_params(**hyper)
+    multi.init_loaders(train_set, val_set)
+    multi.train_and_evaluate(save_dir)
+
+    # Test
+    # Create dataset
+    test_set.calculate_pos(b, c)
+    # T
+    # test_set.calculate_time(t)
+    # T'
+    multi.model.load_state_dict(multi.best_model_dict)
+    test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
+        test_set)
+
+    # Metrics
+    results['best_epochs'].append(multi.best_epochs)
+    results['best_lr'].append(multi.best_lr)
+    results['train_times'].append(multi.train_times[:multi.best_epochs])
+    results['train_loss'].append(multi.train_loss[:multi.best_epochs])
+    results['grad_norms'].append(multi.grad_norms[:multi.best_epochs])
+    results['grad_entropies'].append(multi.grad_entropies[:multi.best_epochs])
+    results['grad_vars'].append(multi.grad_vars[:multi.best_epochs])
+    results['val_times'].append(multi.val_times[:multi.best_epochs])
+    results['val_loss'].append(multi.val_loss[:multi.best_epochs])
+    results['val_conf_matrix'].append(
+        multi.val_conf_matrix[:multi.best_epochs])
+    results['val_acc'].append(multi.val_acc[:multi.best_epochs])
+    results['val_precision'].append(multi.val_precision[:multi.best_epochs])
+    results['val_recall'].append(multi.val_recall[:multi.best_epochs])
+    results['val_F1'].append(multi.val_F1[:multi.best_epochs])
+    results['test_conf_matrix'].append(test_conf_matrix)
+    results['test_acc'].append(test_acc)
+    results['test_precision'].append(test_precision)
+    results['test_recall'].append(test_recall)
+    results['test_F1'].append(test_F1)
+    results['test_out'].append(test_out)
+    results['test_labels'].append(test_labels)
+
+    prev_b = b
+    prev_c = c
+    #prev_t = t
+
+    for b, c in results['dims'][1:math.floor(results['low_start_idx']/2)]:
         b_str = utils.size_to_str(b)
         c_str = utils.size_to_str(c)
-        # T
-        t_str = str(t)
-        # T'
+
+        # Calculate_pos
         train_set.calculate_pos(b, c)
         val_set.calculate_pos(b, c)
-        # T
-        # train_set.calculate_time(t)
-        # val_set.calculate_time(t)
-        # T'
+
+        # Finegrain
+        prev_model_dict = multi.best_model_dict
+        print(prev_model_dict)
+
+        if b[0] != prev_model_dict['W'].size(
+                2) or b[1] != prev_model_dict['W'].size(3):
+            prev_model_dict['W'] = utils.finegrain(
+                prev_model_dict['W'], b, 2)
+        if c[0] != prev_model_dict['W'].size(
+                4) or c[1] != prev_model_dict['W'].size(5):
+            prev_model_dict['W'] = utils.finegrain(
+                prev_model_dict['W'], c, 4)
 
         # Train
+        # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
+        hyper['lr'] = multi.best_lr
         multi = BasketballMulti(device)
         multi.init_full_model(train_set)
-        hyper['lr'] = params['full_lr']
-        hyper['reg_coeff'] = params['full_reg']
-        hyper['stop_threshold'] = params.get('full_stop_threshold')
+        multi.model.load_state_dict(prev_model_dict)
         multi.init_params(**hyper)
         multi.init_loaders(train_set, val_set)
         multi.train_and_evaluate(save_dir)
@@ -155,9 +227,6 @@ if args.type == 'multi' or args.type == 'fixed':
         # Test
         # Create dataset
         test_set.calculate_pos(b, c)
-        # T
-        # test_set.calculate_time(t)
-        # T'
         multi.model.load_state_dict(multi.best_model_dict)
         test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
             test_set)
@@ -168,14 +237,16 @@ if args.type == 'multi' or args.type == 'fixed':
         results['train_times'].append(multi.train_times[:multi.best_epochs])
         results['train_loss'].append(multi.train_loss[:multi.best_epochs])
         results['grad_norms'].append(multi.grad_norms[:multi.best_epochs])
-        results['grad_entropies'].append(multi.grad_entropies[:multi.best_epochs])
+        results['grad_entropies'].append(
+            multi.grad_entropies[:multi.best_epochs])
         results['grad_vars'].append(multi.grad_vars[:multi.best_epochs])
         results['val_times'].append(multi.val_times[:multi.best_epochs])
         results['val_loss'].append(multi.val_loss[:multi.best_epochs])
         results['val_conf_matrix'].append(
             multi.val_conf_matrix[:multi.best_epochs])
         results['val_acc'].append(multi.val_acc[:multi.best_epochs])
-        results['val_precision'].append(multi.val_precision[:multi.best_epochs])
+        results['val_precision'].append(
+            multi.val_precision[:multi.best_epochs])
         results['val_recall'].append(multi.val_recall[:multi.best_epochs])
         results['val_F1'].append(multi.val_F1[:multi.best_epochs])
         results['test_conf_matrix'].append(test_conf_matrix)
@@ -188,77 +259,173 @@ if args.type == 'multi' or args.type == 'fixed':
 
         prev_b = b
         prev_c = c
-        #prev_t = t
-
-        for b, c in results['dims'][1:results['low_start_idx']]:
-            b_str = utils.size_to_str(b)
-            c_str = utils.size_to_str(c)
-
-            # Calculate_pos
-            train_set.calculate_pos(b, c)
-            val_set.calculate_pos(b, c)
-
-            # Finegrain
-            prev_model_dict = multi.best_model_dict
-            print(prev_model_dict)
-
-            if b[0] != prev_model_dict['W'].size(
-                    2) or b[1] != prev_model_dict['W'].size(3):
-                prev_model_dict['W'] = utils.finegrain(
-                    prev_model_dict['W'], b, 2)
-            if c[0] != prev_model_dict['W'].size(
-                    4) or c[1] != prev_model_dict['W'].size(5):
-                prev_model_dict['W'] = utils.finegrain(
-                    prev_model_dict['W'], c, 4)
-
-            # Train
-            # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
-            hyper['lr'] = multi.best_lr
-            multi = BasketballMulti(device)
-            multi.init_full_model(train_set)
-            multi.model.load_state_dict(prev_model_dict)
-            multi.init_params(**hyper)
-            multi.init_loaders(train_set, val_set)
-            multi.train_and_evaluate(save_dir)
-
-            # Test
-            # Create dataset
-            test_set.calculate_pos(b, c)
-            multi.model.load_state_dict(multi.best_model_dict)
-            test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
-                test_set)
-
-            # Metrics
-            results['best_epochs'].append(multi.best_epochs)
-            results['best_lr'].append(multi.best_lr)
-            results['train_times'].append(multi.train_times[:multi.best_epochs])
-            results['train_loss'].append(multi.train_loss[:multi.best_epochs])
-            results['grad_norms'].append(multi.grad_norms[:multi.best_epochs])
-            results['grad_entropies'].append(
-                multi.grad_entropies[:multi.best_epochs])
-            results['grad_vars'].append(multi.grad_vars[:multi.best_epochs])
-            results['val_times'].append(multi.val_times[:multi.best_epochs])
-            results['val_loss'].append(multi.val_loss[:multi.best_epochs])
-            results['val_conf_matrix'].append(
-                multi.val_conf_matrix[:multi.best_epochs])
-            results['val_acc'].append(multi.val_acc[:multi.best_epochs])
-            results['val_precision'].append(
-                multi.val_precision[:multi.best_epochs])
-            results['val_recall'].append(multi.val_recall[:multi.best_epochs])
-            results['val_F1'].append(multi.val_F1[:multi.best_epochs])
-            results['test_conf_matrix'].append(test_conf_matrix)
-            results['test_acc'].append(test_acc)
-            results['test_precision'].append(test_precision)
-            results['test_recall'].append(test_recall)
-            results['test_F1'].append(test_F1)
-            results['test_out'].append(test_out)
-            results['test_labels'].append(test_labels)
-
-            prev_b = b
-            prev_c = c
         
-        if t != 4:
-            prev_model_dict['W'] = utils.finegrain_time_full(prev_model_dict['W'], 4)
+        
+
+    print('came here bruhhhh')
+    
+    t = results['time_dims'][1]
+    prev_model_dict = multi.best_model_dict
+    prev_model_dict['W'] = utils.finegrain_time_full(prev_model_dict['W'], t)
+    train_set.calculate_time(t)
+    val_set.calculate_time(t)
+    test_set.calculate_time(t)
+    
+    # Full-rank first resolution
+    b = results['dims'][max(math.floor(results['low_start_idx']/2) - 1, 0)][0]
+    c = results['dims'][max(math.floor(results['low_start_idx']/2) - 1, 0)][1]
+    # T
+    # t = results['time_dims'][0]
+    # T'
+    b_str = utils.size_to_str(b)
+    c_str = utils.size_to_str(c)
+    # T
+    t_str = str(t)
+    # T'
+    train_set.calculate_pos(b, c)
+    val_set.calculate_pos(b, c)
+    # T
+    # train_set.calculate_time(t)
+    # val_set.calculate_time(t)
+    # T'
+
+    # Train
+    multi = BasketballMulti(device)
+    multi.init_full_model(train_set)
+    hyper['lr'] = params['full_lr']
+    hyper['reg_coeff'] = params['full_reg']
+    hyper['stop_threshold'] = params.get('full_stop_threshold')
+    multi.init_params(**hyper)
+    multi.init_loaders(train_set, val_set)
+    multi.train_and_evaluate(save_dir)
+
+    # Test
+    # Create dataset
+    test_set.calculate_pos(b, c)
+    # T
+    # test_set.calculate_time(t)
+    # T'
+    multi.model.load_state_dict(multi.best_model_dict)
+    test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
+        test_set)
+    
+    print('also came here bruhh')
+
+    # Metrics
+    results['best_epochs'].append(multi.best_epochs)
+    results['best_lr'].append(multi.best_lr)
+    results['train_times'].append(multi.train_times[:multi.best_epochs])
+    results['train_loss'].append(multi.train_loss[:multi.best_epochs])
+    results['grad_norms'].append(multi.grad_norms[:multi.best_epochs])
+    results['grad_entropies'].append(multi.grad_entropies[:multi.best_epochs])
+    results['grad_vars'].append(multi.grad_vars[:multi.best_epochs])
+    results['val_times'].append(multi.val_times[:multi.best_epochs])
+    results['val_loss'].append(multi.val_loss[:multi.best_epochs])
+    results['val_conf_matrix'].append(
+        multi.val_conf_matrix[:multi.best_epochs])
+    results['val_acc'].append(multi.val_acc[:multi.best_epochs])
+    results['val_precision'].append(multi.val_precision[:multi.best_epochs])
+    results['val_recall'].append(multi.val_recall[:multi.best_epochs])
+    results['val_F1'].append(multi.val_F1[:multi.best_epochs])
+    results['test_conf_matrix'].append(test_conf_matrix)
+    results['test_acc'].append(test_acc)
+    results['test_precision'].append(test_precision)
+    results['test_recall'].append(test_recall)
+    results['test_F1'].append(test_F1)
+    results['test_out'].append(test_out)
+    results['test_labels'].append(test_labels)
+
+    prev_b = b
+    prev_c = c
+    #prev_t = t
+
+    i = 0
+    
+    for b, c in results['dims'][math.floor(results['low_start_idx']/2):results['low_start_idx']]:
+        
+        i = i + 1
+        
+        print("omg boi")
+        
+        b_str = utils.size_to_str(b)
+        c_str = utils.size_to_str(c)
+
+        print('cry sadge')
+        
+        # Calculate_pos
+        train_set.calculate_pos(b, c)
+        val_set.calculate_pos(b, c)
+
+        print('idek at this point')
+        
+        # Finegrain
+        prev_model_dict = multi.best_model_dict
+        print(prev_model_dict)
+
+        if b[0] != prev_model_dict['W'].size(
+                2) or b[1] != prev_model_dict['W'].size(3):
+            prev_model_dict['W'] = utils.finegrain(
+                prev_model_dict['W'], b, 2)
+        if c[0] != prev_model_dict['W'].size(
+                4) or c[1] != prev_model_dict['W'].size(5):
+            prev_model_dict['W'] = utils.finegrain(
+                prev_model_dict['W'], c, 4)
+
+        print('idek at this point aaaaf')
+        
+        # Train
+        # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
+        hyper['lr'] = multi.best_lr
+        multi = BasketballMulti(device)
+        multi.init_full_model(train_set)
+        multi.model.load_state_dict(prev_model_dict)
+        multi.init_params(**hyper)
+        multi.init_loaders(train_set, val_set)
+        multi.train_and_evaluate(save_dir)
+
+        print('idek at this point ghghghgthg')
+        
+        # Test
+        # Create dataset
+        test_set.calculate_pos(b, c)
+        multi.model.load_state_dict(multi.best_model_dict)
+        test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
+            test_set)
+        
+        print('this stuff aint working boi', i)
+
+        # Metrics
+        results['best_epochs'].append(multi.best_epochs)
+        results['best_lr'].append(multi.best_lr)
+        results['train_times'].append(multi.train_times[:multi.best_epochs])
+        results['train_loss'].append(multi.train_loss[:multi.best_epochs])
+        results['grad_norms'].append(multi.grad_norms[:multi.best_epochs])
+        results['grad_entropies'].append(
+            multi.grad_entropies[:multi.best_epochs])
+        results['grad_vars'].append(multi.grad_vars[:multi.best_epochs])
+        results['val_times'].append(multi.val_times[:multi.best_epochs])
+        results['val_loss'].append(multi.val_loss[:multi.best_epochs])
+        results['val_conf_matrix'].append(
+            multi.val_conf_matrix[:multi.best_epochs])
+        results['val_acc'].append(multi.val_acc[:multi.best_epochs])
+        results['val_precision'].append(
+            multi.val_precision[:multi.best_epochs])
+        results['val_recall'].append(multi.val_recall[:multi.best_epochs])
+        results['val_F1'].append(multi.val_F1[:multi.best_epochs])
+        results['test_conf_matrix'].append(test_conf_matrix)
+        results['test_acc'].append(test_acc)
+        results['test_precision'].append(test_precision)
+        results['test_recall'].append(test_recall)
+        results['test_F1'].append(test_F1)
+        results['test_out'].append(test_out)
+        results['test_labels'].append(test_labels)
+
+        prev_b = b
+        prev_c = c
+        
+        print('bro wtf?!')
+    
+    
 
     # Draw plots for full rank train
     fp_fig = os.path.join(fig_dir, "full_time_vs_loss.png")
@@ -297,6 +464,7 @@ if args.type == 'multi' or args.type == 'fixed':
                                cmap='RdBu_r',
                                draw_court=False,
                                fp_fig=fp_fig)
+    print('made it here bruh')
 
 # Low-rank first resolution
 b = results['dims'][results['low_start_idx']][0]
@@ -305,6 +473,8 @@ b_str = utils.size_to_str(b)
 c_str = utils.size_to_str(c)
 train_set.calculate_pos(b, c)
 val_set.calculate_pos(b, c)
+train_set.calculate_time(t)
+val_set.calculate_time(t)
 
 # Train
 multi = BasketballMulti(device)
@@ -337,6 +507,7 @@ plot.latent_factor_heatmap(multi.best_model_dict['C'],
 # Test
 # Create dataset
 test_set.calculate_pos(b, c)
+test_set.calculate_time(t)
 multi.model.load_state_dict(multi.best_model_dict)
 test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
     test_set)
@@ -374,6 +545,10 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
 
+    print('################')
+    print('b', b)
+    print('prev_model_dict["B"]', prev_model_dict['B'].size)
+    
     # Finegrain
     prev_model_dict = multi.best_model_dict
     if b[0] != prev_model_dict['B'].size(
@@ -384,6 +559,9 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
             0) or c[1] != prev_model_dict['C'].size(1):
         prev_model_dict['C'] = utils.finegrain(
             prev_model_dict['C'], c, 0)
+        
+    print('prev_model_dict["B"]', prev_model_dict['B'].size)
+    print('################')
 
     # Train
     # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
