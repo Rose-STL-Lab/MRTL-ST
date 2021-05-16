@@ -68,6 +68,42 @@ class BballRawDataset(torch.utils.data.Dataset):
                          1)[:, :self.c_dims[0], :self.c_dims[1]]
 
         self.def_pos = mask.numpy().astype(np.uint8)
+        
+    def calculate_polar_pos(self, b_dims, c_dims):
+        self.b_dims = b_dims
+        self.c_dims = c_dims
+
+        scale_bh = config.b_dims[-1][0] / self.b_dims[0]
+        scale_def = config.c_dims[-1][0] / self.c_dims[0]
+
+        # Scale bh_pos
+        self.bh_pos = (self.data.loc[:, 'bh_angle_from_basket',
+            'bh_dist_from_basket'] / scale_bh).astype(np.uint8).to_numpy()
+
+        # Scale def_pos
+        invalid_def_pos_val = -100
+        def_pos_x = self.data.filter(like='rel_angle_from_bh')[self.data.filter(
+            like='rel_angle_from_bh') != invalid_def_pos_val]
+        def_pos_x = ((def_pos_x + 6) / scale_def)
+        def_pos_x = def_pos_x.fillna(c_dims[0]).astype(np.int16).to_numpy()
+
+        def_pos_y = self.data.filter(like='dist_from_bh')[self.data.filter(
+            like='dist_from_bh') != invalid_def_pos_val]
+        def_pos_y = ((def_pos_y + 2) / scale_def)
+        def_pos_y = def_pos_y.fillna(c_dims[1]).astype(np.int16).to_numpy()
+
+        # Convert 2D to 1D
+        def_pos = def_pos_x * (self.c_dims[0] + 1) + def_pos_y
+        mask = torch.zeros(self.data.shape[0],
+                           (self.c_dims[0] + 1) * (self.c_dims[1] + 1),
+                           dtype=int)
+        mask.scatter_add_(1,
+                          torch.from_numpy(def_pos).long(),
+                          torch.ones_like(mask))
+        mask = mask.view(-1, self.c_dims[0] + 1, self.c_dims[1] +
+                         1)[:, :self.c_dims[0], :self.c_dims[1]]
+
+        self.def_pos = mask.numpy().astype(np.uint8)
 
     def __len__(self):
         return self.data.shape[0]
