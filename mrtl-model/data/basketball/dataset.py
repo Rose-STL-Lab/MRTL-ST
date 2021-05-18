@@ -79,7 +79,7 @@ class BballRawDataset(torch.utils.data.Dataset):
             
         scaled_bh_dist = extracted_bh_pos[:, 0] / (36 / b_dims[0])
         scaled_bh_angle = extracted_bh_pos[:, 1] / (180 / b_dims[1])
-        self.bh_pos = np.column_stack(scaled_bh_dist, scaled_bh_angle)
+        self.bh_pos = np.column_stack((scaled_bh_dist, scaled_bh_angle))
 
         # Scale def_pos
         invalid_def_pos_val = -100
