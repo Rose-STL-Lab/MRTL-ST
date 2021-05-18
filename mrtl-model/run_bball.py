@@ -92,16 +92,16 @@ results = {
     'test_labels': []
 }
 if args.type == 'multi':
-    results['dims'] = [[[4, 5], [6, 6]], [[8, 10], [6, 6]], [[8, 10], [12,
+    results['dims'] = [[[3, 3], [3, 6]], [[6, 6], [3, 6]], [[6, 6], [6,
                                                                        12]],
-                       [[8, 10], [12, 12]], [[20, 25], [12, 12]],
-                       [[40, 50], [12, 12]]]  # Low rank
+                       [[6, 6], [6, 12]], [[9, 9], [6, 12]],
+                       [[18, 18], [6, 12]]]  # Low rank
     results['low_start_idx'] = 3
 elif args.type == 'fixed':
-    results['dims'] = [[[40, 50], [12, 12]], [[40, 50], [12, 12]]]
+    results['dims'] = [[[18, 18], [6, 12]], [[18, 18], [6, 12]]]
     results['low_start_idx'] = 1
 elif args.type == 'rand':
-    results['dims'] = [[[40, 50], [12, 12]]]
+    results['dims'] = [[[18, 18], [6, 12]]]
     results['low_start_idx'] = 0
 
 # Create datasets
@@ -115,8 +115,8 @@ if args.type == 'multi' or args.type == 'fixed':
     c = results['dims'][0][1]
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
-    train_set.calculate_pos(b, c)
-    val_set.calculate_pos(b, c)
+    train_set.calculate_polar_pos(b, c)
+    val_set.calculate_polar_pos(b, c)
 
     # Train
     multi = BasketballMulti(device)
@@ -130,7 +130,7 @@ if args.type == 'multi' or args.type == 'fixed':
 
     # Test
     # Create dataset
-    test_set.calculate_pos(b, c)
+    test_set.calculate_polar_pos(b, c)
     multi.model.load_state_dict(multi.best_model_dict)
     test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
         test_set)
@@ -166,9 +166,9 @@ if args.type == 'multi' or args.type == 'fixed':
         b_str = utils.size_to_str(b)
         c_str = utils.size_to_str(c)
 
-        # Calculate_pos
-        train_set.calculate_pos(b, c)
-        val_set.calculate_pos(b, c)
+        # Calculate_polar_pos
+        train_set.calculate_polar_pos(b, c)
+        val_set.calculate_polar_pos(b, c)
 
         # Finegrain
         prev_model_dict = multi.best_model_dict
@@ -195,7 +195,7 @@ if args.type == 'multi' or args.type == 'fixed':
 
         # Test
         # Create dataset
-        test_set.calculate_pos(b, c)
+        test_set.calculate_polar_pos(b, c)
         multi.model.load_state_dict(multi.best_model_dict)
         test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
             test_set)
@@ -271,8 +271,8 @@ b = results['dims'][results['low_start_idx']][0]
 c = results['dims'][results['low_start_idx']][1]
 b_str = utils.size_to_str(b)
 c_str = utils.size_to_str(c)
-train_set.calculate_pos(b, c)
-val_set.calculate_pos(b, c)
+train_set.calculate_polar_pos(b, c)
+val_set.calculate_polar_pos(b, c)
 
 # Train
 multi = BasketballMulti(device)
@@ -304,7 +304,7 @@ plot.latent_factor_heatmap(multi.best_model_dict['C'],
 
 # Test
 # Create dataset
-test_set.calculate_pos(b, c)
+test_set.calculate_polar_pos(b, c)
 multi.model.load_state_dict(multi.best_model_dict)
 test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
     test_set)
@@ -338,9 +338,9 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
 
-    # Calculate_pos
-    train_set.calculate_pos(b, c)
-    val_set.calculate_pos(b, c)
+    # Calculate_polar_pos
+    train_set.calculate_polar_pos(b, c)
+    val_set.calculate_polar_pos(b, c)
 
     # Finegrain
     prev_model_dict = multi.best_model_dict
@@ -379,7 +379,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
 
     # Test
     # Create dataset
-    test_set.calculate_pos(b, c)
+    test_set.calculate_polar_pos(b, c)
     multi.model.load_state_dict(multi.best_model_dict)
     test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
         test_set)

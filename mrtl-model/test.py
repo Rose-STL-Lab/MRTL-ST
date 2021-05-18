@@ -21,12 +21,8 @@ def calculate_angle(x, y, xRef, yRef):
 
     # yRef - y = dist * cos(angle)
     angle = np.arccos((yRef - y)/dist)
-    
-    # Adjusts angle for values above 180º
-    if x < xRef:
-        return 2 * np.pi - angle
         
-    return angle    # Returns the calculated angle
+    return angle / np.pi * 180    # Returns the calculated angle in degrees
 
 # Calculates the angle between (x,y) and (xRef,yRef). 0º for the right corner,
 # 90º for the front of the basket, 180º for the left corner. Additional
@@ -46,7 +42,9 @@ def calculate_def_angle(x, y, bh_theta):
     if x < 0:
         return 2 * np.pi - angle
         
-    return (angle - np.pi - bh_theta) % (2 * np.pi)    # Returns adjusted angle
+    angle = (angle - np.pi - bh_theta) % (2 * np.pi)
+    
+    return angle / (2 * np.pi) * 360   # Returns adjusted angle in degrees
 
 def draw_half_court_left(ax, color='black', lw=1):
     # Create various parts of an NBA basketball court
@@ -102,7 +100,7 @@ n = 3
 m = 5
 a = 8
 b = 6
-max_length = 35
+max_length = 36
 def_circle_r = 6
 invalid_val = -100
 
@@ -127,11 +125,11 @@ notrunc_data['bh_dist_from_basket'] = notrunc_data.apply(lambda row :
 notrunc_data.loc[(notrunc_data['bh_x'] < x_basket) &
                   (notrunc_data['bh_y'] <= y_basket),
                  'bh_angle_from_basket'] = 0.0
-notrunc_data.loc[(notrunc_data['bh_x'] < x_basket) &
+notrunc_data.loc[(notrunc_data['bh_x'] <= x_basket) &
                   (notrunc_data['bh_y'] > y_basket),
-                 'bh_angle_from_basket'] = 3.141592
+                 'bh_angle_from_basket'] = 179.999999
 notrunc_data.loc[notrunc_data['bh_dist_from_basket'] >= max_length,
-                 'bh_dist_from_basket'] = 34.999999
+                 'bh_dist_from_basket'] = 35.999999
 
 notrunc_data['def1_dist_from_bh'] = notrunc_data.apply(lambda row :
                                                        calculate_distance(
