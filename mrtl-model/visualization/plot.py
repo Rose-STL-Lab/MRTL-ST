@@ -310,12 +310,12 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
     for k in range(shape[-1]):
         # ax.set_title('K={0}'.format(k + 1))
         if draw_court:
-            ax_court = fig.add_axes([0.1175, 1/7, 85/224, 5/7])
+            ax_court = fig.add_axes([0, 0, 1, 1])
             draw_half_court_left(ax_court)
             ax_court.set_xticks([])
             ax_court.set_yticks([])
             
-            data = X[..., k - 1]
+            data = X[..., k - 1].transpose()
 
             ax_polar = fig.add_axes([0, 0, 1, 1], polar=True, frameon=False)
             rad = np.linspace(0, 36, b[0])
@@ -326,7 +326,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
                 for j in range(data[0].shape[0]):
                     heatmap[i*180//b[1]:(i+1)*180//b[1]][j*36//b[0]:(j+1)*36//b[0]] = data[i][j]
     
-            ax_polar.pcolormesh(th, r, heatmap, shading='gouraud', cmap=cmap, alpha=0.3)
+            ax_polar.pcolormesh(th, r, heatmap, shading='nearest', cmap=cmap, alpha=0.3)
             ax_polar.plot(azm, r, color='k', ls='none')
 
             plt.thetagrids(range(0, 181, 180//b[1]))
@@ -352,7 +352,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
                 plt.savefig(fp_fig)
             
         else:
-            data = X[..., k - 1]
+            data = X[..., k - 1].transpose()
 
             ax_polar = fig.add_axes([0, 0, 1, 1], polar=True, frameon=False)
             rad = np.linspace(0, 6, c[0])
@@ -363,7 +363,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
                 for j in range(heatmap[0].shape[0]):
                     heatmap[((i - 180//c[1] - 1) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
     
-            ax_polar.pcolormesh(th, r, heatmap, shading='gouraud', cmap=cmap, alpha=0.3)
+            ax_polar.pcolormesh(th, r, heatmap, shading='nearest', cmap=cmap, alpha=0.3)
             ax_polar.plot(azm, r, color='k', ls='none')
 
             plt.thetagrids(range(180//c[1], 360 - (180//c[1]) + 1, 360//c[1]))
