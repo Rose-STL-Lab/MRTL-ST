@@ -92,16 +92,16 @@ results = {
     'test_labels': []
 }
 if args.type == 'multi':
-    results['dims'] = [[[3, 3], [3, 6]], [[6, 6], [3, 6]], [[6, 6], [6,
+    results['dims'] = [[[3, 2], [3, 6]], [[6, 4], [3, 6]], [[6, 4], [6,
                                                                        12]],
-                       [[6, 6], [6, 12]], [[9, 9], [6, 12]],
-                       [[18, 18], [6, 12]]]  # Low rank
+                       [[6, 4], [6, 12]], [[9, 6], [6, 12]],
+                       [[18, 12], [6, 12]]]  # Low rank
     results['low_start_idx'] = 3
 elif args.type == 'fixed':
-    results['dims'] = [[[18, 18], [6, 12]], [[18, 18], [6, 12]]]
+    results['dims'] = [[[18, 12], [6, 12]], [[18, 12], [6, 12]]]
     results['low_start_idx'] = 1
 elif args.type == 'rand':
-    results['dims'] = [[[18, 18], [6, 12]]]
+    results['dims'] = [[[18, 12], [6, 12]]]
     results['low_start_idx'] = 0
 
 # Create datasets
@@ -253,18 +253,12 @@ if args.type == 'multi' or args.type == 'fixed':
         *c, hyper['K'])
 
     # Draw heatmaps after CP decomposition
-    fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_B_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(prev_model_dict['B'],
-                               cmap='inferno',
-                               draw_court=True,
-                               fp_fig=fp_fig)
-    fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_C_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(prev_model_dict['C'],
-                               cmap='inferno',
-                               draw_court=False,
-                               fp_fig=fp_fig)
+    plot.latent_factor_polar_heatmap(prev_model_dict['B'], fig_dir, prev_b,
+                               prev_c, low=False, cmap='inferno',
+                               draw_court=True)
+    plot.latent_factor_polar_heatmap(prev_model_dict['C'], fig_dir, prev_b,
+                               prev_c, low=False, cmap='inferno',
+                               draw_court=False)
 
 # Low-rank first resolution
 b = results['dims'][results['low_start_idx']][0]
@@ -289,18 +283,10 @@ multi.train_and_evaluate(save_dir)
 
 # Draw heatmaps
 print(multi.best_model_dict)
-fp_fig = os.path.join(fig_dir,
-                      "low_{0},{1}_B_heatmap.png".format(b_str, c_str))
-plot.latent_factor_heatmap(multi.best_model_dict['B'],
-                           cmap='jet',
-                           draw_court=True,
-                           fp_fig=fp_fig)
-fp_fig = os.path.join(fig_dir,
-                      "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
-plot.latent_factor_heatmap(multi.best_model_dict['C'],
-                           cmap='jet',
-                           draw_court=False,
-                           fp_fig=fp_fig)
+plot.latent_factor_polar_heatmap(multi.best_model_dict['B'], fig_dir, b, c,
+                                 cmap='jet', draw_court=True)
+plot.latent_factor_polar_heatmap(multi.best_model_dict['C'], fig_dir, b, c,
+                                 cmap='jet', draw_court=False)
 
 # Test
 # Create dataset
@@ -364,18 +350,10 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     multi.train_and_evaluate(save_dir)
 
     # Draw heatmaps
-    fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_B_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(multi.best_model_dict['B'],
-                               cmap='magma',
-                               draw_court=True,
-                               fp_fig=fp_fig)
-    fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(multi.best_model_dict['C'],
-                               cmap='magma',
-                               draw_court=False,
-                               fp_fig=fp_fig)
+    plot.latent_factor_polar_heatmap(multi.best_model_dict['B'], fig_dir, b, c,
+                                 cmap='magma', draw_court=True)
+    plot.latent_factor_polar_heatmap(multi.best_model_dict['C'], fig_dir, b, c,
+                                 cmap='magma', draw_court=False)
 
     # Test
     # Create dataset

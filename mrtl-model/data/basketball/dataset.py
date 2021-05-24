@@ -72,25 +72,28 @@ class BballRawDataset(torch.utils.data.Dataset):
     def calculate_polar_pos(self, b_dims, c_dims):
         self.b_dims = b_dims
         self.c_dims = c_dims
+        
+        scale_bh = config.b_dims[-1][0] / self.b_dims[0]
+        scale_def = config.c_dims[-1][0] / self.c_dims[0]
 
         # Scale bh_pos
         extracted_bh_pos = (self.data.loc[:, 'bh_dist_from_basket':
             'bh_angle_from_basket']).to_numpy()
             
-        scaled_bh_dist = extracted_bh_pos[:, 0] / (36 / b_dims[0])
-        scaled_bh_angle = extracted_bh_pos[:, 1] / (180 / b_dims[1])
+        scaled_bh_dist = extracted_bh_pos[:, 0] / (2 * scale_bh)
+        scaled_bh_angle = extracted_bh_pos[:, 1] / (15 * scale_bh)
         self.bh_pos = np.column_stack((scaled_bh_dist, scaled_bh_angle))
 
         # Scale def_pos
         invalid_def_pos_val = -100
         def_dist = self.data.filter(like='dist_from_bh')[self.data.filter(
             like='dist_from_bh') != invalid_def_pos_val]
-        def_dist = (def_dist / (6 / c_dims[0]))
+        def_dist = (def_dist / scale_def)
         def_dist = def_dist.fillna(c_dims[0]).astype(np.int16).to_numpy()
 
         def_angle = self.data.filter(like='rel_angle_from_bh')[self.data.filter
             (like='rel_angle_from_bh') != invalid_def_pos_val]
-        def_angle = ((def_angle + (360/(2 * c_dims[1])) % 360)/(360/c_dims[1]))
+        def_angle = (def_angle + (360/(2 * c_dims[1])) % 360)/(30 * scale_def)
         def_angle = def_angle.fillna(c_dims[1]).astype(np.int16).to_numpy()
 
         # Convert 2D to 1D

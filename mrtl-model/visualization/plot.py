@@ -5,8 +5,8 @@ import numpy as np
 from matplotlib.patches import Circle, Rectangle, Arc
 from mpl_toolkits.axes_grid1 import ImageGrid
 from sklearn.preprocessing import MinMaxScaler
-
-from utils import finegrain
+import os
+import utils
 
 plt.rcParams.update({'font.size': 18})
 
@@ -258,7 +258,7 @@ def F1_time(times, F1, low_index=None, fp_fig=None):
 
 def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
     if draw_court:
-        X = finegrain(X, [40, 50], 0)
+        X = utils.finegrain(X, [40, 50], 0)
 
     shape = X.shape
 
@@ -293,3 +293,96 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
     if fp_fig is not None:
         plt.savefig(fp_fig)
     return fig
+
+def latent_factor_polar_heatmap(X, draw_court, fig_dir, b, c, low=True, normalize=True, cmap='RdBu_r'):
+    b_str = utils.size_to_str(b)
+    c_str = utils.size_to_str(c)
+    shape = X.shape
+
+    if normalize:
+        scaler = MinMaxScaler(feature_range=(-1, 1))
+        X = scaler.fit_transform(X.view(-1, shape[-1]).cpu().numpy()).reshape(*shape)
+    else:
+        X = X.cpu().numpy()
+
+    fig = plt.figure()
+
+    for k in shape[-1]:
+        # ax.set_title('K={0}'.format(k + 1))
+        if draw_court:
+            ax_court = fig.add_axes([0.1175, 1/7, 85/224, 5/7])
+            draw_half_court_left(ax_court)
+            ax_court.set_xticks([])
+            ax_court.set_yticks([])
+            
+            data = X[..., k - 1]
+
+            ax_polar = fig.add_axes([0, 0, 1, 1], polar=True, frameon=False)
+            rad = np.linspace(0, 36, b[0])
+            azm = np.linspace(0, np.pi, 180)
+            r, th = np.meshgrid(rad, azm)
+            heatmap = np.zeros((180, b[0]))
+            for i in data.shape[0]:
+                for j in data[0].shape[0]:
+                    heatmap[i*180//b[1]:(i+1)*180//b[1]][j*36//b[0]:(j+1)*36//b[0]] = data[i][j]
+    
+            ax_polar.pcolormesh(th, r, heatmap, shading='gouraud', cmap=cmap, alpha=0.3)
+            ax_polar.plot(azm, r, color='k', ls='none')
+
+            plt.thetagrids(range(0, 181, 180//b[1]))
+            plt.rgrids(range(0, 37, 36//b[0]))
+            ax_polar.set_thetamin(0)
+            ax_polar.set_thetamax(180)
+            ax_polar.set_rmin(0)
+            ax_polar.set_rmax(36)
+            ax_polar.set_theta_zero_location('S')
+            ax_polar.set_anchor('W')
+            plt.grid()
+            
+            k_str = str(k+1)
+            
+            if low:
+                fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap({2}).png".format(b_str, c_str, k_str))
+            else:
+                fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap({2}).png".format(b_str, c_str, k_str))
+                
+            if fp_fig is not None:
+                plt.savefig(fp_fig)
+            
+        else:
+            data = X[..., k - 1]
+
+            ax_polar = fig.add_axes([0, 0, 1, 1], polar=True, frameon=False)
+            rad = np.linspace(0, 6, c[0])
+            azm = np.linspace(0, 2 * np.pi, 360)
+            r, th = np.meshgrid(rad, azm)
+            heatmap = np.zeros((360, c[0]))
+            for i in heatmap.shape[0]:
+                for j in heatmap[0].shape[0]:
+                    heatmap[((i - 180//c[1] - 1) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
+    
+            ax_polar.pcolormesh(th, r, heatmap, shading='gouraud', cmap=cmap, alpha=0.3)
+            ax_polar.plot(azm, r, color='k', ls='none')
+
+            plt.thetagrids(range(180//c[1], 360 - (180//c[1]) + 1, 360//c[1]))
+            plt.rgrids(range(0, 7, 6//c[0]))
+            ax_polar.set_thetamin(0)
+            ax_polar.set_thetamax(360)
+            ax_polar.set_rmin(0)
+            ax_polar.set_rmax(6)
+            ax_polar.set_theta_zero_location('N')
+            plt.grid()
+            
+            k_str = str(k+1)
+            
+            if low:
+                fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap({2}).png".format(b_str, c_str, k_str))
+            else:
+                fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap({2}).png".format(b_str, c_str, k_str))
+                
+            if fp_fig is not None:
+                plt.savefig(fp_fig)
