@@ -24,6 +24,9 @@ class Full(torch.nn.Module):
         self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) #######
 
     def forward(self, a, time, bh_pos, def_pos):
+#         print('time', time)
+#         a_long = a.long()
+#         print()
         # Only some defenders in defender box
 #         print(self.W[a.long(), bh_pos[:, 0].long(),bh_pos[:, 1].long(), :, :].size)
 #         print(self.W.size())
@@ -61,13 +64,39 @@ class Full(torch.nn.Module):
             
 
 #         print("Dim match")
+       
+#         print('W', self.W.size())
+        
+#         print('a', a.long())
+#         print('t', time.long())
+#         print('b1', temp1)
+#         print('b2', temp2)
+        
 #         print('first', self.W[a.long(), time.long(), temp1,temp2, :, :].size())
 #         print('second', def_pos.float().size())
+        
+
+        
+        first = self.W[a.long(), time.long(), temp1,temp2, :, :]
+        
+#         print('first', first)
+        
+        second = def_pos.float()
+#         print('second', second.size())
+
+#         out = torch.einsum(
+#             'bcd,bcd->b', self.W[a.long(), time.long(), temp1,temp2, :, :], def_pos.float())
+
+#         torch.save(first, 'first.pt')
+#         torch.save(second, 'second.pt')
+
+        torch.einsum('bcd,bcd->b', first, second)
 
         out = torch.einsum(
-            'bcd,bcd->b', self.W[a.long(), time.long(), temp1,temp2, :, :], def_pos.float())
+            'bcd,bcd->b', first, second)
+        
+#         print('bro plz')
         return out.add_(self.b[a.long()]) #######
-
 
 class Low(torch.nn.Module):
     def __init__(self, a_dims, t_dims, b_dims, c_dims, K, counts):

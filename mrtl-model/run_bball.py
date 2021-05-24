@@ -14,6 +14,8 @@ from data.basketball.dataset import BballRawDataset
 from train.basketball.multi import BasketballMulti
 from visualization import plot
 
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+
 # Arguments Parse
 parser = argparse.ArgumentParser()
 parser.add_argument('--root-dir', dest='root_dir')
@@ -154,7 +156,7 @@ if args.type == 'multi' or args.type == 'fixed':
     multi.init_params(**hyper)
     multi.init_loaders(train_set, val_set)
     multi.train_and_evaluate(save_dir)
-
+    
     # Test
     # Create dataset
     test_set.calculate_pos(b, c)

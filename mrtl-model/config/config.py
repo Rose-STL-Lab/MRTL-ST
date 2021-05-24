@@ -12,5 +12,5 @@ fn_test = 'test_40x50.pkl'
 parent_logger_name = "mrtl"
 
 num_workers = 6
-max_epochs = 1
+max_epochs = 100
 

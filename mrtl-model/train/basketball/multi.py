@@ -431,6 +431,8 @@ class BasketballMulti:
             def_pos = def_pos.to(self.device)
             y = y.to(self.device)
 
+#             print(a)
+            
             # zero the parameter gradients
             self.optimizer.zero_grad()
 

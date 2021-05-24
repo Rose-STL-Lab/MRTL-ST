@@ -68,12 +68,12 @@ class BballRawDataset(torch.utils.data.Dataset):
                            (self.c_dims[0] + 1) * (self.c_dims[1] + 1),
                            dtype=int)
         
-        print('mask', mask.shape)
-        print('1st param.shape', torch.from_numpy(def_pos).long().shape)
-        print('1st param', torch.from_numpy(def_pos).long())
-        print('2nd param.shape') 
-        print(torch.ones_like(mask).shape)
-        print('idk how we r still fine')
+#         print('mask', mask.shape)
+#         print('1st param.shape', torch.from_numpy(def_pos).long().shape)
+#         print('1st param', torch.from_numpy(def_pos).long())
+#         print('2nd param.shape') 
+#         print(torch.ones_like(mask))
+#         print('idk how we r still fine')
         
         mask.scatter_add_(1, 
                           torch.from_numpy(def_pos).long(), 
@@ -85,10 +85,20 @@ class BballRawDataset(torch.utils.data.Dataset):
         
     # T
     def calculate_time(self, t_dims):
+        
+#         print('self.data.loc[:, "quarter"]', self.data.loc[:, 'quarter'])
+        
+#         if t_dims == 1:
+#             self.time = 0
+#         else:
+#             self.time = self.data.loc[:, 'quarter']
+        
+        
         self.t_dims = t_dims
         scale_time = config.t_dims[-1] / self.t_dims
         # Scale time
         self.time = (self.data.loc[:, 'quarter'] / scale_time).astype(np.uint8).to_numpy()
+#         print('time', self.time)
     # T'
 
     def __len__(self):
