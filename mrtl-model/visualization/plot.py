@@ -359,8 +359,8 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             azm = np.linspace(0, 2 * np.pi, 360)
             r, th = np.meshgrid(rad, azm)
             heatmap = np.zeros((360, c[0]))
-            for i in heatmap.shape[0]:
-                for j in heatmap[0].shape[0]:
+            for i in range(heatmap.shape[0]):
+                for j in range(heatmap[0].shape[0]):
                     heatmap[((i - 180//c[1] - 1) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='gouraud', cmap=cmap, alpha=0.3)
