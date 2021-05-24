@@ -294,7 +294,7 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
         plt.savefig(fp_fig)
     return fig
 
-def latent_factor_polar_heatmap(X, draw_court, fig_dir, b, c, low=True, normalize=True, cmap='RdBu_r'):
+def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normalize=True, cmap='RdBu_r'):
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
     shape = X.shape
