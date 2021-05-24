@@ -315,9 +315,9 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             ax_court.set_xticks([])
             ax_court.set_yticks([])
             
-            data = X[..., k - 1].transpose()
+            data = X[..., k - 1]
 
-            ax_polar = fig.add_axes([1/5, 1/5, 4/5, 4/5], polar=True, frameon=False)
+            ax_polar = fig.add_axes([0, 0, 1, 1], polar=True, frameon=False)
             rad = np.linspace(0, 36, b[0])
             azm = np.linspace(0, np.pi, 180)
             r, th = np.meshgrid(rad, azm)
@@ -327,7 +327,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
                     heatmap[i][j] = data[i*b[1]//180][j*b[0]//36]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='flat', cmap=cmap, alpha=0.3)
-            ax_polar.plot(azm, r, color='r', ls='none')
+            ax_polar.plot(azm, r, ls='none')
 
             plt.thetagrids(range(0, 181, 180//b[1]))
             plt.rgrids(range(0, 37, 36//b[0]))
@@ -337,6 +337,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             ax_polar.set_rmax(36)
             ax_polar.set_theta_zero_location('S')
             ax_polar.set_anchor('W')
+            ax_polar.set_xticks([])
             plt.grid()
             
             k_str = str(k+1)
@@ -352,9 +353,9 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
                 plt.savefig(fp_fig)
             
         else:
-            data = X[..., k - 1].transpose()
+            data = X[..., k - 1]
 
-            ax_polar = fig.add_axes([1/5, 1/5, 4/5, 4/5], polar=True, frameon=False)
+            ax_polar = fig.add_axes([0, 0, 1, 1], polar=True)
             rad = np.linspace(0, 6, c[0])
             azm = np.linspace(0, 2 * np.pi, 360)
             r, th = np.meshgrid(rad, azm)
@@ -364,7 +365,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
                     heatmap[((i - 180//c[1] - 1) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='flat', cmap=cmap, alpha=0.3)
-            ax_polar.plot(azm, r, color='r', ls='none')
+            ax_polar.plot(azm, r, ls='none')
 
             plt.thetagrids(range(180//c[1], 360 - (180//c[1]) + 1, 360//c[1]))
             plt.rgrids(range(0, 7, 6//c[0]))
