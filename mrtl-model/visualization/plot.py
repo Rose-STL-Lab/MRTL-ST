@@ -309,7 +309,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
         # ax.set_title('K={0}'.format(k + 1))
         fig = plt.figure()
         if draw_court:
-            ax_court = fig.add_axes([0.145, 1/7, 2/5, 5/7])
+            ax_court = fig.add_axes([0.14, 1/7, 0.42, 5/7])
             draw_half_court_left(ax_court)
             ax_court.set_xticks([])
             ax_court.set_yticks([])
@@ -362,7 +362,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             heatmap = np.zeros((360, c[0]))
             for i in range(heatmap.shape[0]):
                 for j in range(heatmap[0].shape[0]):
-                    heatmap[((i - 180//c[1] - 1) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
+                    heatmap[((i - 180//c[1]) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='flat', cmap=cmap)
             ax_polar.plot(azm, r, ls='none')
