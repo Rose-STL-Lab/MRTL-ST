@@ -307,7 +307,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
 
     fig = plt.figure()
 
-    for k in shape[-1]:
+    for k in range(shape[-1]):
         # ax.set_title('K={0}'.format(k + 1))
         if draw_court:
             ax_court = fig.add_axes([0.1175, 1/7, 85/224, 5/7])
@@ -322,8 +322,8 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             azm = np.linspace(0, np.pi, 180)
             r, th = np.meshgrid(rad, azm)
             heatmap = np.zeros((180, b[0]))
-            for i in data.shape[0]:
-                for j in data[0].shape[0]:
+            for i in range(data.shape[0]):
+                for j in range(data[0].shape[0]):
                     heatmap[i*180//b[1]:(i+1)*180//b[1]][j*36//b[0]:(j+1)*36//b[0]] = data[i][j]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='gouraud', cmap=cmap, alpha=0.3)
