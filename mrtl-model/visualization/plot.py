@@ -309,7 +309,7 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
         # ax.set_title('K={0}'.format(k + 1))
         fig = plt.figure()
         if draw_court:
-            ax_court = fig.add_axes([1/4, 1/7, 85/224, 5/7])
+            ax_court = fig.add_axes([1/5, 1/7, 1/2, 5/7])
             draw_half_court_left(ax_court)
             ax_court.set_xticks([])
             ax_court.set_yticks([])
