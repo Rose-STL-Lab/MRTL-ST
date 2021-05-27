@@ -93,7 +93,7 @@ class BballRawDataset(torch.utils.data.Dataset):
 
         def_angle = self.data.filter(like='rel_angle_from_bh')[self.data.filter
             (like='rel_angle_from_bh') != invalid_def_pos_val]
-        def_angle = (def_angle + (360/(2 * c_dims[1])) % 360)/(30 * scale_def)
+        def_angle = ((def_angle + 15) % 360)/(30 * scale_def)
         def_angle = def_angle.fillna(c_dims[1]).astype(np.int16).to_numpy()
 
         # Convert 2D to 1D

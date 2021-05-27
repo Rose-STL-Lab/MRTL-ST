@@ -317,13 +317,13 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             data = X[..., k - 1].transpose()
 
             ax_polar = fig.add_axes([0, 0, 1, 1], polar=True, frameon=False)
-            rad = np.linspace(0, 36, b[0])
+            rad = np.linspace(0, 36, 100)
             azm = np.linspace(0, np.pi, 180)
             r, th = np.meshgrid(rad, azm)
-            heatmap = np.zeros((180, b[0]))
+            heatmap = np.zeros((180, 100))
             for i in range(heatmap.shape[0]):
                 for j in range(heatmap[0].shape[0]):
-                    heatmap[i][j] = data[i*b[1]//180][j*b[0]//36]
+                    heatmap[i][j] = data[i*b[1]//180][j*b[0]//100]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='flat', cmap=cmap, alpha=0.3)
             ax_polar.plot(azm, r, ls='none')
@@ -356,13 +356,13 @@ def latent_factor_polar_heatmap(X, fig_dir, b, c, draw_court, low=True, normaliz
             data = X[..., k - 1].transpose()
 
             ax_polar = fig.add_axes([0, 0, 1, 1], polar=True)
-            rad = np.linspace(0, 6, c[0])
+            rad = np.linspace(0, 6, 100)
             azm = np.linspace(0, 2 * np.pi, 360)
             r, th = np.meshgrid(rad, azm)
-            heatmap = np.zeros((360, c[0]))
+            heatmap = np.zeros((360, 100))
             for i in range(heatmap.shape[0]):
                 for j in range(heatmap[0].shape[0]):
-                    heatmap[((i - 180//c[1]) % 360)][j] = data[i*c[1]//360][j*c[0]//6]
+                    heatmap[((i - 15) % 360)][j] = data[i*c[1]//360][j*c[0]//100]
     
             ax_polar.pcolormesh(th, r, heatmap, shading='flat', cmap=cmap)
             ax_polar.plot(azm, r, ls='none')
