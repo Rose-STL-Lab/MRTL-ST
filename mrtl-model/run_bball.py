@@ -255,10 +255,10 @@ if args.type == 'multi' or args.type == 'fixed':
     # Draw heatmaps after CP decomposition
     plot.latent_factor_polar_heatmap(prev_model_dict['B'], fig_dir, prev_b,
                                prev_c, draw_court=True, low=False,
-                               cmap='inferno')
+                               cmap='RdBu_r')
     plot.latent_factor_polar_heatmap(prev_model_dict['C'], fig_dir, prev_b,
                                prev_c, draw_court=False, low=False,
-                               cmap='inferno')
+                               cmap='RdBu_r')
 
 # Low-rank first resolution
 b = results['dims'][results['low_start_idx']][0]
@@ -284,9 +284,9 @@ multi.train_and_evaluate(save_dir)
 # Draw heatmaps
 print(multi.best_model_dict)
 plot.latent_factor_polar_heatmap(multi.best_model_dict['B'], fig_dir, b, c,
-                                 draw_court=True, cmap='jet')
+                                 draw_court=True, cmap='RdBu_r')
 plot.latent_factor_polar_heatmap(multi.best_model_dict['C'], fig_dir, b, c,
-                                  draw_court=False, cmap='jet')
+                                  draw_court=False, cmap='RdBu_r')
 
 # Test
 # Create dataset
@@ -351,9 +351,9 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
 
     # Draw heatmaps
     plot.latent_factor_polar_heatmap(multi.best_model_dict['B'], fig_dir, b, c,
-                                  draw_court=True, cmap='magma')
+                                  draw_court=True, cmap='RdBu_r')
     plot.latent_factor_polar_heatmap(multi.best_model_dict['C'], fig_dir, b, c,
-                                 draw_court=False, cmap='magma')
+                                 draw_court=False, cmap='RdBu_r')
 
     # Test
     # Create dataset
