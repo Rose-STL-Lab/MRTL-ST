@@ -45,7 +45,6 @@ def calculate_def_angle(x, y, bh_theta):
     
     return angle / (2 * np.pi) * 360   # Returns adjusted angle in degrees
 
-data = np.load("data/basketball/full_data.pkl", allow_pickle=True)
 notrunc_data = pd.read_pickle("data/basketball/full_data_notrunc.pkl")
 pd.set_option('max_columns', None)
 
