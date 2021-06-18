@@ -46,7 +46,6 @@ def calculate_def_angle(x, y, bh_theta):
     return angle / (2 * np.pi) * 360   # Returns adjusted angle in degrees
 
 notrunc_data = pd.read_pickle("data/basketball/full_data_notrunc.pkl")
-pd.set_option('max_columns', None)
 
 bh_pos = (data.loc[420, 'bh_x':'bh_y']).astype(np.float).to_numpy()
 def_pos = (data.loc[420, 'def5_trunc_x':'def5_trunc_y']).astype(np.float).to_numpy()
@@ -60,8 +59,6 @@ b = 6
 max_length = 36
 def_circle_r = 6
 invalid_val = -100
-
-print("Original DataFrame:\n", notrunc_data)
 
 notrunc_data['bh_angle_from_basket'] = notrunc_data.apply(lambda row :
                                                           calculate_angle(
@@ -176,7 +173,5 @@ notrunc_data.loc[(abs(notrunc_data['def5_trunc_x']) >= 6) |
                   (notrunc_data['def5_trunc_y'] < -2) |
                   (notrunc_data['def5_trunc_y'] >= 10),
                  ['def5_trunc_x', 'def5_trunc_y']] = invalid_val
-
-print("New Dataframe:\n", notrunc_data)
 
 notrunc_data.to_pickle("full_data_trunc.pkl")
