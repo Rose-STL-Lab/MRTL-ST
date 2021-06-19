@@ -256,13 +256,13 @@ if args.type == 'multi' or args.type == 'fixed':
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap.png".format(b_str, c_str))
     plot.latent_factor_heatmap(prev_model_dict['B'],
-                               cmap='inferno',
+                               cmap='RdBu_r',
                                draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap.png".format(b_str, c_str))
     plot.latent_factor_heatmap(prev_model_dict['C'],
-                               cmap='inferno',
+                               cmap='RdBu_r',
                                draw_court=False,
                                fp_fig=fp_fig)
 
@@ -292,13 +292,13 @@ print(multi.best_model_dict)
 fp_fig = os.path.join(fig_dir,
                       "low_{0},{1}_B_heatmap.png".format(b_str, c_str))
 plot.latent_factor_heatmap(multi.best_model_dict['B'],
-                           cmap='jet',
+                           cmap='RdBu_r',
                            draw_court=True,
                            fp_fig=fp_fig)
 fp_fig = os.path.join(fig_dir,
                       "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
 plot.latent_factor_heatmap(multi.best_model_dict['C'],
-                           cmap='jet',
+                           cmap='RdBu_r',
                            draw_court=False,
                            fp_fig=fp_fig)
 
@@ -367,13 +367,13 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap.png".format(b_str, c_str))
     plot.latent_factor_heatmap(multi.best_model_dict['B'],
-                               cmap='magma',
+                               cmap='RdBu_r',
                                draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
     plot.latent_factor_heatmap(multi.best_model_dict['C'],
-                               cmap='magma',
+                               cmap='RdBu_r',
                                draw_court=False,
                                fp_fig=fp_fig)
 
