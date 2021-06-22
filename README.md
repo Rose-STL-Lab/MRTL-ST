@@ -22,10 +22,9 @@ polarcoordbranch does not yet have the time dimension functioning yet
 
 MZK fill this
 
-## Training 
-
-Run prepare_bball.py and run_bball.py with arguments to run a single experiment. prepare_bball.py creates the training dataset and sets miscellaneous parameters for a single trial (logger, seed, etc.)
-
+## Training
+Run `prepare_bball.py` and `run_bball.py` with arguments to run a single experiment. `prepare_bball.py` creates the training dataset and sets miscellaneous parameters for a single trial (logger, seed, etc.)
+```bash
 python prepare_bball.py \
     --root-dir $RUN_DIR \
     -data-dir $DATA_DIR
@@ -44,9 +43,10 @@ python run_bball.py \
     --full_reg $FULL_REG \ 
     --low_lr $LOW_LR \ 
     --low_reg $LOW_REG
+```
 
+Helper scripts are provided in `src/` to do 10 trials of fixed vs multi resolution and stop_condition experiments.
 
-Helper scripts are provided in src/ to do 10 trials of fixed vs multi resolution and stop_condition experiments.
 
 
 ## Contributing
