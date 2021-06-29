@@ -80,5 +80,5 @@ class BballRawDataset(torch.utils.data.Dataset):
         return self.data.shape[0]
 
     def __getitem__(self, idx):
-        return self.a[idx], self.bh_pos[idx, :], self.def_pos[
-            idx, :, :], self.y[idx]
+        return self.a[idx], self.t_1[idx, :], self.bh_pos[idx, :], self.t_2[idx, :],
+        self.def_pos[idx, :, :], self.y[idx]
