@@ -16,10 +16,12 @@ class Full(torch.nn.Module):
         super().__init__()
 #         a_dims +=1
 
+        # Multiply b)dims[0] by 4 to account for 4 quarters
+        b_dims[0] = b_dims[0] * 4
         self.a_dims = a_dims
         self.b_dims = b_dims
         self.c_dims = c_dims
-        self.W = torch.nn.Parameter(torch.randn((a_dims, 4 * (*b_dims), *c_dims)),
+        self.W = torch.nn.Parameter(torch.randn((a_dims, *b_dims, *c_dims)),
                                     requires_grad=True)
         print('W shape = ' + str(self.W.shape))
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
