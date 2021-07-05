@@ -29,11 +29,8 @@ class BballRawDataset(torch.utils.data.Dataset):
         self.c_dims = None
 
         self.a = self.data.loc[:, 'a'].astype(np.int16).to_numpy()
-        self.t_1 = None
         self.bh_pos = None
-        self.t_2 = None
         self.def_pos = None
-        
         self.y = self.data.loc[:, 'shoot_label'].astype(np.uint8).to_numpy()
 
     def calculate_pos(self, b_dims, c_dims):
@@ -42,14 +39,13 @@ class BballRawDataset(torch.utils.data.Dataset):
 
         scale_bh = config.b_dims[-1][0] / self.b_dims[0]
         scale_def = config.c_dims[-1][0] / self.c_dims[0]
-        
-        self.t_1 = (self.data.loc[:, 'quarter']).astype(np.uint8).to_numpy()
 
         # Scale bh_pos
-        self.bh_pos = (self.data.loc[:, 'bh_x':'bh_y'] / scale_bh).astype(
+        bh_x = (self.data.loc[:, 'bh_x'] / scale_bh + self.b_dims[0] *
+                self.data.loc[:, 'quarter']).astype(np.uint8).to_numpy()
+        bh_y = (self.data.loc[:, 'bh_y'] / scale_bh).astype(
             np.uint8).to_numpy()
-        
-        self.t_2 = (self.data.loc[:, 'quarter']).astype(np.uint8).to_numpy()
+        self.bh_pos = np.column_stack(bh_x, bh_y)
 
         # Scale def_pos
         invalid_def_pos_val = -100
@@ -80,4 +76,5 @@ class BballRawDataset(torch.utils.data.Dataset):
         return self.data.shape[0]
 
     def __getitem__(self, idx):
-        return self.a[idx], self.t_1[idx], self.bh_pos[idx, :], self.t_2[idx], self.def_pos[idx, :, :], self.y[idx]
+        return self.a[idx], self.bh_pos[idx, :], self.def_pos[
+            idx, :, :], self.y[idx]

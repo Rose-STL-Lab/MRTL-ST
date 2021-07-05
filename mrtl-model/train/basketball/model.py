@@ -17,15 +17,15 @@ class Full(torch.nn.Module):
 #         a_dims +=1
 
         self.a_dims = a_dims
-        t_dims = 4
         self.b_dims = b_dims
         self.c_dims = c_dims
-        self.W = torch.nn.Parameter(torch.randn((a_dims, t_dims, *b_dims, t_dims, *c_dims)),
+        self.W = torch.nn.Parameter(torch.randn((a_dims, 4 * (*b_dims), *c_dims)),
                                     requires_grad=True)
+        print('W shape = ' + str(self.W.shape))
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
         self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True)
 
-    def forward(self, a, t_1, bh_pos, t_2, def_pos):
+    def forward(self, a, bh_pos, def_pos):
         # Only some defenders in defender box
 #         print(self.W[a.long(), bh_pos[:, 0].long(),bh_pos[:, 1].long(), :, :].size)
 #         print(self.W.size())
@@ -45,13 +45,12 @@ class Full(torch.nn.Module):
         # if bh_pos[:, 1].long() >= self.W.size()[2]:
         #     temp2 = self.W.size()[2]-1
 #         print('test')
-        # W.size = i, bh_x, bh_y, def_x, def_y
-        # new W.size = i, t_1, bh_x, bh_y, t_2, def_x, def_y
-        one1 = torch.ones_like(temp1) * (self.W.size()[2]-1)
+        one1 = torch.ones_like(temp1) * (self.W.size()[1]-1)
         temp1 = torch.where(temp1 >= self.W.size()[1], one1, temp1)
-        one2 = torch.ones_like(temp2) * (self.W.size()[4]-1)
+        one2 = torch.ones_like(temp2) * (self.W.size()[2]-1)
         temp2 = torch.where(temp2 >= self.W.size()[2], one2, temp2)
         one3 = torch.ones_like(temp3) * (self.W.size()[0]-1)
+
         temp3 = torch.where(temp3 >= self.W.size()[0], one3, temp3)
 #         print(temp1,temp2)
 #         print(self.W.size())
@@ -68,7 +67,7 @@ class Full(torch.nn.Module):
 
 
         out = torch.einsum(
-            'bcd,bcd->b', self.W[temp3, t_1, temp1,temp2, t_2, :, :], def_pos.float())
+            'bcd,bcd->b', self.W[temp3, temp1,temp2, :, :], def_pos.float())
         return out.add_(self.b[temp3])
 
 
@@ -113,8 +112,6 @@ class Low(torch.nn.Module):
         one3 = torch.ones_like(temp3) * (self.A.size()[0]-1)
 
         temp3 = torch.where(temp3 >= self.A.size()[0], one3, temp3)
-        
-        # A_i, B_t_1xd_1, C_t_2xd_2 = A_i, B_d_1', C_d_2'
             
 #         print(self.B.size())
 

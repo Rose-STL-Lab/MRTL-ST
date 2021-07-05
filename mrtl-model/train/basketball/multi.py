@@ -66,6 +66,7 @@ class BasketballMulti:
     def init_full_model(self, train_set):
         counts = utils.class_counts(train_set)
         self.dims = [train_set.b_dims, train_set.c_dims]
+        print(self.dims)
 
         self.model = model.Full(train_set.a_dims, train_set.b_dims,
                                 train_set.c_dims, counts)
@@ -397,11 +398,9 @@ class BasketballMulti:
             self.gradients[i].zero_()
 
         self.model.train()
-        for i, (a, t_1, bh_pos, t_2, def_pos, y) in enumerate(self.train_loader):
+        for i, (a, bh_pos, def_pos, y) in enumerate(self.train_loader):
             a = a.to(self.device)
-            t_1 = t_1.to(self.device)
             bh_pos = bh_pos.to(self.device)
-            t_2 = t_2.to(self.device)
             def_pos = def_pos.to(self.device)
             y = y.to(self.device)
 
@@ -409,7 +408,7 @@ class BasketballMulti:
             self.optimizer.zero_grad()
 
             # Forward pass
-            outputs = self.model(a, t_1, bh_pos, t_2, def_pos)
+            outputs = self.model(a, bh_pos, def_pos)
 
             # Compute loss
             loss = self.loss_fn(outputs, y.float())
@@ -495,15 +494,13 @@ class BasketballMulti:
 
         self.model.eval()
         with torch.no_grad():
-            for i, (a, t_1, bh_pos, t_2, def_pos, y) in enumerate(self.val_loader):
+            for i, (a, bh_pos, def_pos, y) in enumerate(self.val_loader):
                 a = a.to(self.device)
-                t_1 = t_1.to(self.device)
                 bh_pos = bh_pos.to(self.device)
-                t_2 = t_2.to(self.device)
                 def_pos = def_pos.to(self.device)
                 y = y.to(self.device)
 
-                outputs = self.model(a, t_1, bh_pos, t_2, def_pos)
+                outputs = self.model(a, bh_pos, def_pos)
 
                 # Compute loss
                 loss = self.loss_fn(outputs, y.float())
@@ -596,15 +593,13 @@ class BasketballMulti:
 
         self.model.eval()
         with torch.no_grad():
-            for i, (a, t_1, bh_pos, t_2, def_pos, y) in enumerate(test_loader):
+            for i, (a, bh_pos, def_pos, y) in enumerate(test_loader):
                 a = a.to(self.device)
-                t_1 = t_1.to(self.device)
                 bh_pos = bh_pos.to(self.device)
-                t_2 = t_2.to(self.device)
                 def_pos = def_pos.to(self.device)
                 y = y.to(self.device)
 
-                outputs = self.model(a, t_1, bh_pos, t_2, def_pos)
+                outputs = self.model(a, bh_pos, def_pos)
 
                 # Update confusion matrix
                 preds = (outputs > self.decision_threshold).bool()
