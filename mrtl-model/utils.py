@@ -150,7 +150,7 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_1.add_((K_C * pdist(W_1_unfold)).sum() /
                  (torch.numel(W_1) * np.prod(model.c_dims)))
         
-        print(reg_1.shape)
+        print(reg_1)
         
         # Court dimension
         W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1] * W_2.size()[2],
