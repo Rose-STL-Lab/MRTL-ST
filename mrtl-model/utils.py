@@ -99,7 +99,7 @@ def l2_regularizer(model, device):
 
 
 def create_kernel(dims, sigma, device):
-    coords = torch.cartesian_prod(torch.arange(0, dims[0]//4, dtype=torch.float),
+    coords = torch.cartesian_prod(torch.arange(0, dims[0], dtype=torch.float),
                                   torch.arange(0, dims[1], dtype=torch.float))
     print(dims)
     print(coords.shape)
