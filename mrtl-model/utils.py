@@ -140,9 +140,6 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1] * W_1.size()[2],
                                        W_1.size()[3], W_1.size()[4]),
                           mode=1).contiguous()
-        print(W_1.shape)
-        print(W_1_unfold.shape)
-        print(K_B.shape)
         reg_1.add_((K_B * pdist(W_1_unfold)).sum() /
                  (torch.numel(W_1) * np.prod(model.b_dims)))
 
@@ -152,6 +149,8 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
                           mode=3).contiguous()
         reg_1.add_((K_C * pdist(W_1_unfold)).sum() /
                  (torch.numel(W_1) * np.prod(model.c_dims)))
+        
+        print(reg_1.shape)
         
         # Court dimension
         W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1] * W_2.size()[2],
