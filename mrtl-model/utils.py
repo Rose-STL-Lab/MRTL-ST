@@ -127,7 +127,7 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
     reg = torch.tensor(0.).to(device)
 
     # Separate by quarters
-    reg_1, reg_2, reg_3, reg_4 = torch.chunk(reg, 4, 1)
+    reg_1, reg_2, reg_3, reg_4 = torch.chunk(reg, 4)
     
     if type(model).__name__.startswith('Full'):        
         # Split W into quarters
