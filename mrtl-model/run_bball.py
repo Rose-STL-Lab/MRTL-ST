@@ -174,14 +174,29 @@ if args.type == 'multi' or args.type == 'fixed':
         prev_model_dict = multi.best_model_dict
         print(prev_model_dict)
 
-        if b[0] != prev_model_dict['W'].size(
-                1) or b[1] != prev_model_dict['W'].size(2):
-            prev_model_dict['W'] = utils.finegrain(
-                prev_model_dict['W'], b, 1)
-        if c[0] != prev_model_dict['W'].size(
-                3) or c[1] != prev_model_dict['W'].size(4):
-            prev_model_dict['W'] = utils.finegrain(
-                prev_model_dict['W'], c, 3)
+        # Separate the tensor into quarters
+        W_1, W_2, W_3, W_4 = torch.chunk(prev_model_dict['W'], 4, 1)
+        
+        # Finegrain each quarter separately
+        if b[0] != W_1.size(1) or b[1] != W_1.size(2):
+            W_1 = utils.finegrain(W_1, b, 1)
+        if c[0] != W_1.size(3) or c[1] != W_1.size(4):
+            W_1 = utils.finegrain(W_1, c, 3)
+        if b[0] != W_2.size(1) or b[1] != W_2.size(2):
+            W_2 = utils.finegrain(W_2, b, 1)
+        if c[0] != W_2.size(3) or c[1] != W_2.size(4):
+            W_2 = utils.finegrain(W_2, c, 3)
+        if b[0] != W_3.size(1) or b[1] != W_3.size(2):
+            W_3 = utils.finegrain(W_3, b, 1)
+        if c[0] != W_3.size(3) or c[1] != W_3.size(4):
+            W_3 = utils.finegrain(W_3, c, 3)
+        if b[0] != W_4.size(1) or b[1] != W_4.size(2):
+            W_4 = utils.finegrain(W_4, b, 1)
+        if c[0] != W_4.size(3) or c[1] != W_4.size(4):
+            W_4 = utils.finegrain(W_4, c, 3)
+            
+        # Recombine the quarter chunks into one tensor
+        prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 1)
 
         # Train
         # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
