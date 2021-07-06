@@ -124,25 +124,76 @@ def pdist(X):
 
 def bball_spatial_regularizer(model, K_B, K_C, device):
     #breakpoint()
-    reg = torch.tensor(0.).to(device)
+    reg_1 = torch.tensor(0.).to(device)
+    reg_2 = torch.tensor(0.).to(device)
+    reg_3 = torch.tensor(0.).to(device)
+    reg_4 = torch.tensor(0.).to(device)
     
-    if type(model).__name__.startswith('Full'):
-        W_size = model.W.size()
+    if type(model).__name__.startswith('Full'):        
+        # Split W into quarters
+        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
 
         # Court dimension
-        W_unfold = unfold(model.W.view(W_size[0], W_size[1] * W_size[2],
-                                       W_size[3], W_size[4]),
+        W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1] * W_1.size()[2],
+                                       W_1.size()[3], W_1.size()[4]),
                           mode=1).contiguous()
-        reg.add_((K_B * pdist(W_unfold)).sum() /
-                 (torch.numel(model.W) * np.prod(model.b_dims)))
+        reg_1.add_((K_B * pdist(W_1_unfold)).sum() /
+                 (torch.numel(W_1) * np.prod(model.b_dims)))
 
         # Defender position
-        W_unfold = unfold(model.W.view(W_size[0], W_size[1], W_size[2],
-                                       W_size[3] * W_size[4]),
+        W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1], W_1.size()[2],
+                                       W_1.size()[3] * W_1.size()[4]),
                           mode=3).contiguous()
-        reg.add_((K_C * pdist(W_unfold)).sum() /
-                 (torch.numel(model.W) * np.prod(model.c_dims)))
+        reg_1.add_((K_C * pdist(W_1_unfold)).sum() /
+                 (torch.numel(W_1) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1] * W_2.size()[2],
+                                       W_2.size()[3], W_2.size()[4]),
+                          mode=1).contiguous()
+        reg_2.add_((K_B * pdist(W_2_unfold)).sum() /
+                 (torch.numel(W_2) * np.prod(model.b_dims)))
+
+        # Defender position
+        W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1], W_2.size()[2],
+                                       W_2.size()[3] * W_2.size()[4]),
+                          mode=3).contiguous()
+        reg_2.add_((K_C * pdist(W_2_unfold)).sum() /
+                 (torch.numel(W_2) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        W_3_unfold = unfold(W_3.view(W_3.size()[0], W_3.size()[1] * W_3.size()[2],
+                                       W_3.size()[3], W_3.size()[4]),
+                          mode=1).contiguous()
+        reg_3.add_((K_B * pdist(W_3_unfold)).sum() /
+                 (torch.numel(W_3) * np.prod(model.b_dims)))
+
+        # Defender position
+        W_3_unfold = unfold(W_3.view(W_3.size()[0], W_3.size()[1], W_3.size()[2],
+                                       W_3.size()[3] * W_3.size()[4]),
+                          mode=3).contiguous()
+        reg_3.add_((K_C * pdist(W_3_unfold)).sum() /
+                 (torch.numel(W_3) * np.prod(model.c_dims)))
+        
+        
+        # Court dimension
+        W_4_unfold = unfold(W_4.view(W_4.size()[0], W_4.size()[1] * W_4.size()[2],
+                                       W_4.size()[3], W_4.size()[4]),
+                          mode=1).contiguous()
+        reg_4.add_((K_B * pdist(W_4_unfold)).sum() /
+                 (torch.numel(W_4) * np.prod(model.b_dims)))
+
+        # Defender position
+        W_4_unfold = unfold(W_4.view(W_4.size()[0], W_4.size()[1], W_4.size()[2],
+                                       W_4.size()[3] * W_4.size()[4]),
+                          mode=3).contiguous()
+        reg_4.add_((K_C * pdist(W_4_unfold)).sum() /
+                 (torch.numel(W_4) * np.prod(model.c_dims)))
+        
+        reg = torch.cat((reg_1, reg_2, reg_3, reg_4), 1)
     else:
+        reg = torch.tensor(0.).to(device)
+        
         # Court position
         reg.add_((K_B * pdist(model.B.view(-1, model.K))).sum() /
                  (torch.numel(model.B) * np.prod(model.b_dims)))
