@@ -141,6 +141,7 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1] * W_1.size()[2],
                                        W_1.size()[3], W_1.size()[4]),
                           mode=1).contiguous()
+        print(W_1.shape)
         print(W_1_unfold.shape)
         print(B_1.shape)
         reg_1.add_((B_1 * pdist(W_1_unfold)).sum() /
