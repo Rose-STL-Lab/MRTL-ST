@@ -132,8 +132,8 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
     if type(model).__name__.startswith('Full'):        
         # Split W, K_B and K_C into quarters
         W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
-        B_1, B_2, B_3, B_4 = torch.chunk(K_B, 4, 1)
-        C_1, C_2, C_3, C_4 = torch.chunk(K_C, 4, 1)
+        B_1, B_2, B_3, B_4 = torch.chunk(K_B, 4)
+        C_1, C_2, C_3, C_4 = torch.chunk(K_C, 4)
 
         # Court dimension
         W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1] * W_1.size()[2],
