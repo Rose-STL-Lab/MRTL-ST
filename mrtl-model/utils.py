@@ -124,10 +124,10 @@ def pdist(X):
 
 def bball_spatial_regularizer(model, K_B, K_C, device):
     #breakpoint()
-    reg_1 = torch.tensor(0.).to(device)
-    reg_2 = torch.tensor(0.).to(device)
-    reg_3 = torch.tensor(0.).to(device)
-    reg_4 = torch.tensor(0.).to(device)
+    reg = torch.tensor(0.).to(device)
+
+    # Separate by quarters
+    reg_1, reg_2, reg_3, reg_4 = torch.chunk(reg, 4, 1)
     
     if type(model).__name__.startswith('Full'):        
         # Split W into quarters
@@ -190,10 +190,9 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_4.add_((K_C * pdist(W_4_unfold)).sum() /
                  (torch.numel(W_4) * np.prod(model.c_dims)))
         
+        # Recombine the regularized quarters
         reg = torch.cat((reg_1, reg_2, reg_3, reg_4), 1)
     else:
-        reg = torch.tensor(0.).to(device)
-        
         # Court position
         reg.add_((K_B * pdist(model.B.view(-1, model.K))).sum() /
                  (torch.numel(model.B) * np.prod(model.b_dims)))
