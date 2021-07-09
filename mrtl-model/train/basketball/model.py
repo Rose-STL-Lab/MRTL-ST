@@ -23,7 +23,6 @@ class Full(torch.nn.Module):
         self.c_dims = c_dims
         self.W = torch.nn.Parameter(torch.randn((a_dims, *b_dims, *c_dims)),
                                     requires_grad=True)
-        print('W shape = ' + str(self.W.shape))
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
         self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True)
 

@@ -66,7 +66,6 @@ class BasketballMulti:
     def init_full_model(self, train_set):
         counts = utils.class_counts(train_set)
         self.dims = [train_set.b_dims, train_set.c_dims]
-        print(self.dims)
 
         self.model = model.Full(train_set.a_dims, train_set.b_dims,
                                 train_set.c_dims, counts)

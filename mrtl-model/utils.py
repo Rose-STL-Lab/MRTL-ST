@@ -150,8 +150,6 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_1.add_((K_C * pdist(W_1_unfold)).sum() /
                  (torch.numel(W_1) * np.prod(model.c_dims)))
         
-        print(reg_1)
-        
         # Court dimension
         W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1] * W_2.size()[2],
                                        W_2.size()[3], W_2.size()[4]),
@@ -196,7 +194,7 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
                  (torch.numel(W_4) * np.prod(model.c_dims)))
         
         # Recombine the regularized quarters
-        reg = torch.cat((reg_1, reg_2, reg_3, reg_4), 1)
+        reg = (reg_1 + reg_2 + reg_3 + reg_4)/4.0
     else:
         reg = torch.tensor(0.).to(device)
         
