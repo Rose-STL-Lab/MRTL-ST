@@ -101,8 +101,6 @@ def l2_regularizer(model, device):
 def create_kernel(dims, sigma, device):
     coords = torch.cartesian_prod(torch.arange(0, dims[0], dtype=torch.float),
                                   torch.arange(0, dims[1], dtype=torch.float))
-    print(dims)
-    print(coords.shape)
     dist = torch.cdist(coords, coords, p=2).to(device)
 
     # To normalize distances across different resolutions
@@ -110,7 +108,6 @@ def create_kernel(dims, sigma, device):
 
     # K is matrix of degree of similarity between coordinates
     K = torch.exp(-dist**2 / sigma)
-    print(K.shape)
     return K
 
 

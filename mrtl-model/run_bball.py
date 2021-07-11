@@ -269,6 +269,7 @@ if args.type == 'multi' or args.type == 'fixed':
 
     # Draw heatmaps after CP decomposition
     B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 1)
+    print(B_1.shape)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
