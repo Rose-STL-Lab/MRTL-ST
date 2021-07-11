@@ -315,7 +315,7 @@ multi.train_and_evaluate(save_dir)
 
 # Draw heatmaps
 print(multi.best_model_dict)
-B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 1)
+B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
 plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
@@ -401,7 +401,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     multi.train_and_evaluate(save_dir)
 
     # Draw heatmaps
-    B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 1)
+    B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
