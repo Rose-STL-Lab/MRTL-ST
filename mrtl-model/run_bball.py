@@ -268,11 +268,22 @@ if args.type == 'multi' or args.type == 'fixed':
         *c, hyper['K'])
 
     # Draw heatmaps after CP decomposition
+    B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 1)
     fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_B_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(prev_model_dict['B'],
-                               cmap='RdBu_r',
-                               draw_court=True,
+                          "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_2.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_2, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_3.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_3, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_4.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap.png".format(b_str, c_str))
@@ -304,12 +315,23 @@ multi.train_and_evaluate(save_dir)
 
 # Draw heatmaps
 print(multi.best_model_dict)
+B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 1)
 fp_fig = os.path.join(fig_dir,
-                      "low_{0},{1}_B_heatmap.png".format(b_str, c_str))
-plot.latent_factor_heatmap(multi.best_model_dict['B'],
-                           cmap='RdBu_r',
-                           draw_court=True,
-                           fp_fig=fp_fig)
+                          "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_2.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_2, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_3.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_3, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_4.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
 fp_fig = os.path.join(fig_dir,
                       "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
 plot.latent_factor_heatmap(multi.best_model_dict['C'],
@@ -379,11 +401,22 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     multi.train_and_evaluate(save_dir)
 
     # Draw heatmaps
+    B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 1)
     fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_B_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(multi.best_model_dict['B'],
-                               cmap='RdBu_r',
-                               draw_court=True,
+                          "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_2.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_2, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_3.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_3, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_4.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
