@@ -139,6 +139,27 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
                           mode=1).contiguous()
         reg_1.add_((K_B * pdist(W_1_unfold)).sum() /
                  (torch.numel(W_1) * np.prod(model.b_dims)))
+        
+        W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1] * W_2.size()[2],
+                                       W_2.size()[3], W_2.size()[4]),
+                          mode=1).contiguous()
+        reg_2.add_((K_B * pdist(W_2_unfold)).sum() /
+                 (torch.numel(W_2) * np.prod(model.b_dims)))
+        
+        W_3_unfold = unfold(W_3.view(W_3.size()[0], W_3.size()[1] * W_3.size()[2],
+                                       W_3.size()[3], W_3.size()[4]),
+                          mode=1).contiguous()
+        reg_3.add_((K_B * pdist(W_3_unfold)).sum() /
+                 (torch.numel(W_3) * np.prod(model.b_dims)))
+        
+        W_4_unfold = unfold(W_4.view(W_4.size()[0], W_4.size()[1] * W_4.size()[2],
+                                       W_4.size()[3], W_4.size()[4]),
+                          mode=1).contiguous()
+        reg_4.add_((K_B * pdist(W_4_unfold)).sum() /
+                 (torch.numel(W_4) * np.prod(model.b_dims)))
+        
+        # Split W into quarters
+        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 3)
 
         # Defender position
         W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1], W_1.size()[2],
@@ -147,50 +168,25 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_1.add_((K_C * pdist(W_1_unfold)).sum() /
                  (torch.numel(W_1) * np.prod(model.c_dims)))
         
-        # Court dimension
-        W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1] * W_2.size()[2],
-                                       W_2.size()[3], W_2.size()[4]),
-                          mode=1).contiguous()
-        reg_2.add_((K_B * pdist(W_2_unfold)).sum() /
-                 (torch.numel(W_2) * np.prod(model.b_dims)))
-
-        # Defender position
         W_2_unfold = unfold(W_2.view(W_2.size()[0], W_2.size()[1], W_2.size()[2],
                                        W_2.size()[3] * W_2.size()[4]),
                           mode=3).contiguous()
         reg_2.add_((K_C * pdist(W_2_unfold)).sum() /
                  (torch.numel(W_2) * np.prod(model.c_dims)))
         
-        # Court dimension
-        W_3_unfold = unfold(W_3.view(W_3.size()[0], W_3.size()[1] * W_3.size()[2],
-                                       W_3.size()[3], W_3.size()[4]),
-                          mode=1).contiguous()
-        reg_3.add_((K_B * pdist(W_3_unfold)).sum() /
-                 (torch.numel(W_3) * np.prod(model.b_dims)))
-
-        # Defender position
         W_3_unfold = unfold(W_3.view(W_3.size()[0], W_3.size()[1], W_3.size()[2],
                                        W_3.size()[3] * W_3.size()[4]),
                           mode=3).contiguous()
         reg_3.add_((K_C * pdist(W_3_unfold)).sum() /
                  (torch.numel(W_3) * np.prod(model.c_dims)))
         
-        
-        # Court dimension
-        W_4_unfold = unfold(W_4.view(W_4.size()[0], W_4.size()[1] * W_4.size()[2],
-                                       W_4.size()[3], W_4.size()[4]),
-                          mode=1).contiguous()
-        reg_4.add_((K_B * pdist(W_4_unfold)).sum() /
-                 (torch.numel(W_4) * np.prod(model.b_dims)))
-
-        # Defender position
         W_4_unfold = unfold(W_4.view(W_4.size()[0], W_4.size()[1], W_4.size()[2],
                                        W_4.size()[3] * W_4.size()[4]),
                           mode=3).contiguous()
         reg_4.add_((K_C * pdist(W_4_unfold)).sum() /
                  (torch.numel(W_4) * np.prod(model.c_dims)))
         
-        # Recombine the regularized quarters
+        # Recombine the regularized quarter values
         reg = (reg_1 + reg_2 + reg_3 + reg_4)/4.0
     else:
         reg = torch.tensor(0.).to(device)
