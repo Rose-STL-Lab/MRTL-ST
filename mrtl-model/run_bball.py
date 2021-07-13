@@ -115,10 +115,9 @@ if args.type == 'multi' or args.type == 'fixed':
     c = results['dims'][0][1]
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
+    print('About to calculate position')
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
-    
-    print('Calculated position')
 
     # Train
     multi = BasketballMulti(device)
