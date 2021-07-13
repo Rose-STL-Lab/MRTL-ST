@@ -36,6 +36,9 @@ class BballRawDataset(torch.utils.data.Dataset):
     def calculate_pos(self, b_dims, c_dims):
         self.b_dims = b_dims
         self.c_dims = c_dims
+        
+        print(b_dims)
+        print(c_dims)
 
         scale_bh = config.b_dims[-1][0] / self.b_dims[0]
         scale_def = config.c_dims[-1][0] / self.c_dims[0]
@@ -57,7 +60,6 @@ class BballRawDataset(torch.utils.data.Dataset):
         def_pos_x = def_pos_x.fillna(4 * c_dims[0]).astype(np.int16).to_numpy()
         def_pos_x = (def_pos_x.transpose() + quarter_offset).transpose()
         def_pos_x = np.clip(def_pos_x, a_min=0, a_max=(4 * c_dims[0]))
-        print(def_pos_x.max())
 
         def_pos_y = self.data.filter(like='trunc_y')[self.data.filter(
             like='trunc_y') != invalid_def_pos_val]

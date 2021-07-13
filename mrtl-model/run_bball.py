@@ -113,6 +113,8 @@ if args.type == 'multi' or args.type == 'fixed':
     # Full-rank first resolution
     b = results['dims'][0][0]
     c = results['dims'][0][1]
+    print(b)
+    print(c)
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
     train_set.calculate_pos(b, c)
@@ -127,6 +129,9 @@ if args.type == 'multi' or args.type == 'fixed':
     multi.init_params(**hyper)
     multi.init_loaders(train_set, val_set)
     multi.train_and_evaluate(save_dir)
+    
+    print(b)
+    print(c)
 
     # Test
     # Create dataset
