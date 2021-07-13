@@ -130,7 +130,7 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
     reg_4 = torch.tensor(0.).to(device)
 
     if type(model).__name__.startswith('Full'):        
-        # Split W, K_B and K_C into quarters
+        # Split W into quarters
         W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
 
         # Court dimension
@@ -202,6 +202,45 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         # Defender position
         reg.add_((K_C * pdist(model.C.view(-1, model.K))).sum() /
                  (torch.numel(model.C) * np.prod(model.c_dims)))
+        
+        # Split B and C into quarters
+        B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
+        C_1, C_2, C_3, C_4 = torch.chunk(model.C, 4, 0)
+
+        # Court dimension
+        reg_1.add_((K_B * pdist(B_1.view(-1, model.K))).sum() /
+                 (torch.numel(B_1) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_1.add_((K_C * pdist(C_1.view(-1, model.K))).sum() /
+                 (torch.numel(C_1) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        reg_2.add_((K_B * pdist(B_2.view(-1, model.K))).sum() /
+                 (torch.numel(B_2) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_2.add_((K_C * pdist(C_2.view(-1, model.K))).sum() /
+                 (torch.numel(C_2) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        reg_3.add_((K_B * pdist(B_3.view(-1, model.K))).sum() /
+                 (torch.numel(B_3) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_3.add_((K_C * pdist(C_3.view(-1, model.K))).sum() /
+                 (torch.numel(C_3) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        reg_4.add_((K_B * pdist(B_4.view(-1, model.K))).sum() /
+                 (torch.numel(B_4) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_4.add_((K_C * pdist(C_4.view(-1, model.K))).sum() /
+                 (torch.numel(C_4) * np.prod(model.c_dims)))
+        
+        # Recombine the regularized quarters
+        reg = (reg_1 + reg_2 + reg_3 + reg_4)/4.0
 
     return reg
 

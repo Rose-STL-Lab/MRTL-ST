@@ -174,29 +174,28 @@ if args.type == 'multi' or args.type == 'fixed':
         prev_model_dict = multi.best_model_dict
         print(prev_model_dict)
 
-        # Separate the tensor into quarters
-        W_1, W_2, W_3, W_4 = torch.chunk(prev_model_dict['W'], 4, 1)
-        
-        # Finegrain each quarter separately
-        if b[0] != W_1.size(1) or b[1] != W_1.size(2):
+        if (4 * b[0]) != prev_model_dict['W'].size(
+                1) or b[1] != prev_model_dict['W'].size(2):
+            # Separate the tensor into quarters
+            W_1, W_2, W_3, W_4 = torch.chunk(prev_model_dict['W'], 4, 1)
+            # Finegrain each quarter separately
             W_1 = utils.finegrain(W_1, b, 1)
-        if c[0] != W_1.size(3) or c[1] != W_1.size(4):
-            W_1 = utils.finegrain(W_1, c, 3)
-        if b[0] != W_2.size(1) or b[1] != W_2.size(2):
             W_2 = utils.finegrain(W_2, b, 1)
-        if c[0] != W_2.size(3) or c[1] != W_2.size(4):
-            W_2 = utils.finegrain(W_2, c, 3)
-        if b[0] != W_3.size(1) or b[1] != W_3.size(2):
             W_3 = utils.finegrain(W_3, b, 1)
-        if c[0] != W_3.size(3) or c[1] != W_3.size(4):
-            W_3 = utils.finegrain(W_3, c, 3)
-        if b[0] != W_4.size(1) or b[1] != W_4.size(2):
             W_4 = utils.finegrain(W_4, b, 1)
-        if c[0] != W_4.size(3) or c[1] != W_4.size(4):
+            # Recombine the quarter chunks into one tensor
+            prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 1)
+        if (4 * c[0]) != prev_model_dict['W'].size(
+                3) or c[1] != prev_model_dict['W'].size(4):
+            # Separate the tensor into quarters
+            W_1, W_2, W_3, W_4 = torch.chunk(prev_model_dict['W'], 4, 3)
+            # Finegrain each quarter separately
+            W_1 = utils.finegrain(W_1, c, 3)
+            W_2 = utils.finegrain(W_2, c, 3)
+            W_3 = utils.finegrain(W_3, c, 3)
             W_4 = utils.finegrain(W_4, c, 3)
-            
-        # Recombine the quarter chunks into one tensor
-        prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 1)
+            # Recombine the quarter chunks into one tensor
+            prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 3)
 
         # Train
         # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
@@ -269,6 +268,7 @@ if args.type == 'multi' or args.type == 'fixed':
 
     # Draw heatmaps after CP decomposition
     B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
+    C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
@@ -286,10 +286,20 @@ if args.type == 'multi' or args.type == 'fixed':
     plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_C_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(prev_model_dict['C'],
-                               cmap='RdBu_r',
-                               draw_court=False,
+                          "full_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_2.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_2, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_3.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_3, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -316,6 +326,7 @@ multi.train_and_evaluate(save_dir)
 # Draw heatmaps
 print(multi.best_model_dict)
 B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
+C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
 plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
@@ -333,11 +344,21 @@ fp_fig = os.path.join(fig_dir,
 plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 fp_fig = os.path.join(fig_dir,
-                      "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
-plot.latent_factor_heatmap(multi.best_model_dict['C'],
-                           cmap='RdBu_r',
-                           draw_court=False,
-                           fp_fig=fp_fig)
+                          "low_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_2.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_2, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_3.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_3, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
 
 # Test
 # Create dataset
@@ -381,14 +402,28 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
 
     # Finegrain
     prev_model_dict = multi.best_model_dict
-    if b[0] != prev_model_dict['B'].size(
+    if (4 * b[0]) != prev_model_dict['B'].size(
             0) or b[1] != prev_model_dict['B'].size(1):
-        prev_model_dict['B'] = utils.finegrain(
-            prev_model_dict['B'], b, 0)
-    if c[0] != prev_model_dict['C'].size(
+        # Separate B into quarters
+        B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
+        # Finegrain each quarter separately
+        B_1 = utils.finegrain(B_1, b, 0)
+        B_2 = utils.finegrain(B_2, b, 0)
+        B_3 = utils.finegrain(B_3, b, 0)
+        B_4 = utils.finegrain(B_4, b, 0)
+        # Recombine the quarter chunks into one tensor
+        prev_model_dict['B'] = torch.cat((B_1, B_2, B_3, B_4), 0)
+    if (4 * c[0]) != prev_model_dict['C'].size(
             0) or c[1] != prev_model_dict['C'].size(1):
-        prev_model_dict['C'] = utils.finegrain(
-            prev_model_dict['C'], c, 0)
+        # Separate C into quarters
+        C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
+        # Finegrain each quarter separately
+        C_1 = utils.finegrain(C_1, c, 0)
+        C_2 = utils.finegrain(C_2, c, 0)
+        C_3 = utils.finegrain(C_3, c, 0)
+        C_4 = utils.finegrain(C_4, c, 0)
+        # Recombine the quarter chunks into one tensor
+        prev_model_dict['C'] = torch.cat((C_1, C_2, C_3, C_4), 0)
 
     # Train
     # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
@@ -402,6 +437,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
 
     # Draw heatmaps
     B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
+    C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
@@ -419,10 +455,20 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_C_heatmap.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(multi.best_model_dict['C'],
-                               cmap='RdBu_r',
-                               draw_court=False,
+                          "low_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_2.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_2, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_3.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_3, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
     # Test

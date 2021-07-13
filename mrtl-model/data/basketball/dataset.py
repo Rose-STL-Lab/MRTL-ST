@@ -51,7 +51,7 @@ class BballRawDataset(torch.utils.data.Dataset):
         invalid_def_pos_val = -100
         def_pos_x = self.data.filter(like='trunc_x')[self.data.filter(
             like='trunc_x') != invalid_def_pos_val]
-        def_pos_x = ((def_pos_x + 6) / scale_def)
+        def_pos_x = ((def_pos_x + 6) / scale_def) + self.c_dims[0] * self.data.loc[:, 'quarter']
         def_pos_x = def_pos_x.fillna(c_dims[0]).astype(np.int16).to_numpy()
 
         def_pos_y = self.data.filter(like='trunc_y')[self.data.filter(
@@ -62,13 +62,13 @@ class BballRawDataset(torch.utils.data.Dataset):
         # Convert 2D to 1D
         def_pos = def_pos_x * (self.c_dims[0] + 1) + def_pos_y
         mask = torch.zeros(self.data.shape[0],
-                           (self.c_dims[0] + 1) * (self.c_dims[1] + 1),
+                           (self.c_dims[0] * 4 + 1) * (self.c_dims[1] + 1),
                            dtype=int)
         mask.scatter_add_(1,
                           torch.from_numpy(def_pos).long(),
                           torch.ones_like(mask))
-        mask = mask.view(-1, self.c_dims[0] + 1, self.c_dims[1] +
-                         1)[:, :self.c_dims[0], :self.c_dims[1]]
+        mask = mask.view(-1, self.c_dims[0] * 4 + 1, self.c_dims[1] +
+                         1)[:, :self.c_dims[0] * 4, :self.c_dims[1]]
 
         self.def_pos = mask.numpy().astype(np.uint8)
 
