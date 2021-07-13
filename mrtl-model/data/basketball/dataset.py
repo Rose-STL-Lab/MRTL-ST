@@ -51,11 +51,14 @@ class BballRawDataset(torch.utils.data.Dataset):
         invalid_def_pos_val = -100
         def_pos_x = self.data.filter(like='trunc_x')[self.data.filter(
             like='trunc_x') != invalid_def_pos_val]
-        quarter_offset = self.c_dims[0] * self.data.loc[:, 'quarter'].astype(np.int16).to_numpy()
+        quarter_offset = self.c_dims[0] * self.data.loc[:, 'quarter'].astype(
+            np.int16).to_numpy()
         def_pos_x = ((def_pos_x + 6) / scale_def)
         def_pos_x = def_pos_x.fillna(4 * c_dims[0]).astype(np.int16).to_numpy()
         def_pos_x = (def_pos_x.transpose() + quarter_offset).transpose()
-        def_pos_x = np.clip(def_pos_x, a_min=0, a_max=(4 * c_dims[0]))
+        max_array = [4 * c_dims[0], 4 * c_dims[0], 4 * c_dims[0],
+                     4 * c_dims[0], 4 * c_dims[0]]
+        def_pos_x = np.clip(def_pos_x, a_min=0, a_max=max_array)
 
         def_pos_y = self.data.filter(like='trunc_y')[self.data.filter(
             like='trunc_y') != invalid_def_pos_val]
