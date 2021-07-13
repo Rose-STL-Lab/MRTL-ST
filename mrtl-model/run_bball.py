@@ -267,6 +267,11 @@ if args.type == 'multi' or args.type == 'fixed':
                                          W_size[3] * W_size[4])
     weights, factors = cp_decompose(W, hyper['K'], max_iter=2000)
     factors = [f * torch.pow(weights, 1 / len(factors)) for f in factors]
+    
+    # Bug fix
+    b = [b[0] * 4, b[1]]
+    c = [c[0] * 4, c[1]]
+    
     prev_model_dict.pop('W')
     prev_model_dict['A'] = factors[0].clone().detach()
     prev_model_dict['B'] = factors[1].clone().detach().view(
