@@ -51,6 +51,7 @@ class BballRawDataset(torch.utils.data.Dataset):
         invalid_def_pos_val = -100
         def_pos_x = self.data.filter(like='trunc_x')[self.data.filter(
             like='trunc_x') != invalid_def_pos_val]
+        print('About to add quarters')
         def_pos_x = ((def_pos_x + 6) / scale_def) + self.c_dims[
             0] * self.data.loc[:, 'quarter']
         print('Quarter addition completed')
