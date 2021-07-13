@@ -52,10 +52,11 @@ class BballRawDataset(torch.utils.data.Dataset):
         def_pos_x = self.data.filter(like='trunc_x')[self.data.filter(
             like='trunc_x') != invalid_def_pos_val]
         print('About to add quarters')
-        def_pos_x = ((def_pos_x + 6) / scale_def) + self.c_dims[
-            0] * self.data.loc[:, 'quarter']
-        print('Quarter addition completed')
+        quarter_offset = self.c_dims[0] * self.data.loc[:, 'quarter'].astype(np.int16).to_numpy()
+        def_pos_x = ((def_pos_x + 6) / scale_def)
         def_pos_x = def_pos_x.fillna(4 * c_dims[0]).astype(np.int16).to_numpy()
+        def_pos_x = def_pos_x + quarter_offset
+        print('Quarter addition completed')
 
         def_pos_y = self.data.filter(like='trunc_y')[self.data.filter(
             like='trunc_y') != invalid_def_pos_val]
