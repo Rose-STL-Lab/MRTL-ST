@@ -113,8 +113,6 @@ if args.type == 'multi' or args.type == 'fixed':
     # Full-rank first resolution
     b = results['dims'][0][0]
     c = results['dims'][0][1]
-    print(b)
-    print(c)
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
     train_set.calculate_pos(b, c)
@@ -130,8 +128,9 @@ if args.type == 'multi' or args.type == 'fixed':
     multi.init_loaders(train_set, val_set)
     multi.train_and_evaluate(save_dir)
     
-    print(b)
-    print(c)
+    # Bug fix
+    b = [b[0]//4, b[1]]
+    c = [c[0]//4, c[1]]
 
     # Test
     # Create dataset
@@ -139,6 +138,9 @@ if args.type == 'multi' or args.type == 'fixed':
     multi.model.load_state_dict(multi.best_model_dict)
     test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
         test_set)
+    
+    print(b)
+    print(c)
 
     # Metrics
     results['best_epochs'].append(multi.best_epochs)
@@ -170,6 +172,9 @@ if args.type == 'multi' or args.type == 'fixed':
     for b, c in results['dims'][1:results['low_start_idx']]:
         b_str = utils.size_to_str(b)
         c_str = utils.size_to_str(c)
+        
+        print(b)
+        print(c)
 
         # Calculate_pos
         train_set.calculate_pos(b, c)
@@ -211,6 +216,9 @@ if args.type == 'multi' or args.type == 'fixed':
         multi.init_params(**hyper)
         multi.init_loaders(train_set, val_set)
         multi.train_and_evaluate(save_dir)
+        
+        print(b)
+        print(c)
 
         # Test
         # Create dataset
@@ -218,6 +226,9 @@ if args.type == 'multi' or args.type == 'fixed':
         multi.model.load_state_dict(multi.best_model_dict)
         test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
             test_set)
+        
+        print(b)
+        print(c)
 
         # Metrics
         results['best_epochs'].append(multi.best_epochs)
@@ -310,6 +321,8 @@ if args.type == 'multi' or args.type == 'fixed':
 # Low-rank first resolution
 b = results['dims'][results['low_start_idx']][0]
 c = results['dims'][results['low_start_idx']][1]
+print(b)
+print(c)
 b_str = utils.size_to_str(b)
 c_str = utils.size_to_str(c)
 train_set.calculate_pos(b, c)
@@ -365,12 +378,18 @@ fp_fig = os.path.join(fig_dir,
 plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
+print(b)
+print(c)
+
 # Test
 # Create dataset
 test_set.calculate_pos(b, c)
 multi.model.load_state_dict(multi.best_model_dict)
 test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
     test_set)
+
+print(b)
+print(c)
 
 # Metrics
 results['best_epochs'].append(multi.best_epochs)
@@ -400,6 +419,9 @@ prev_c = c
 for b, c in results['dims'][results['low_start_idx'] + 1:]:
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
+    
+    print(b)
+    print(c)
 
     # Calculate_pos
     train_set.calculate_pos(b, c)
@@ -475,6 +497,9 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
                           "low_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
+    
+    print(b)
+    print(c)
 
     # Test
     # Create dataset
@@ -482,6 +507,9 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     multi.model.load_state_dict(multi.best_model_dict)
     test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
         test_set)
+    
+    print(b)
+    print(c)
 
     # Metrics
     results['best_epochs'].append(multi.best_epochs)
