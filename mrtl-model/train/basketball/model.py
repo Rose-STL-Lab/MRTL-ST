@@ -14,9 +14,8 @@ class DataParallelPassthrough(torch.nn.DataParallel):
 class Full(torch.nn.Module):
     def __init__(self, a_dims, b_dims, c_dims, counts):
         super().__init__()
-#         a_dims +=1
 
-        # Multiply b)dims[0] by 4 to account for 4 quarters
+        # Multiply b_dims[0] and c_dims[0] by 4 to account for 4 quarters
         b_dims[0] = b_dims[0] * 4
         c_dims[0] = c_dims[0] * 4
         self.a_dims = a_dims
@@ -76,7 +75,8 @@ class Full(torch.nn.Module):
 class Low(torch.nn.Module):
     def __init__(self, a_dims, b_dims, c_dims, K, counts):
         super().__init__()
-#         a_dims +=1
+        
+        # Multiply b_dims[0] and c_dims[0] by 4 to account for 4 quarters
         b_dims[0] = 4 * b_dims[0]
         c_dims[0] = 4 * c_dims[0]
         self.a_dims = a_dims

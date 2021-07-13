@@ -196,6 +196,8 @@ if args.type == 'multi' or args.type == 'fixed':
             W_4 = utils.finegrain(W_4, c, 3)
             # Recombine the quarter chunks into one tensor
             prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 3)
+            
+            print('Got to training')
 
         # Train
         # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
