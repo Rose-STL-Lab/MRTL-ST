@@ -189,16 +189,6 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         # Recombine the regularized quarter values
         reg = (reg_1 + reg_2 + reg_3 + reg_4)/4.0
     else:
-        reg = torch.tensor(0.).to(device)
-        
-        # Court position
-        reg.add_((K_B * pdist(model.B.view(-1, model.K))).sum() /
-                 (torch.numel(model.B) * np.prod(model.b_dims)))
-
-        # Defender position
-        reg.add_((K_C * pdist(model.C.view(-1, model.K))).sum() /
-                 (torch.numel(model.C) * np.prod(model.c_dims)))
-        
         # Split B and C into quarters
         B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
         C_1, C_2, C_3, C_4 = torch.chunk(model.C, 4, 0)
