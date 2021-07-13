@@ -36,9 +36,6 @@ class BballRawDataset(torch.utils.data.Dataset):
     def calculate_pos(self, b_dims, c_dims):
         self.b_dims = b_dims
         self.c_dims = c_dims
-        
-        print(b_dims)
-        print(c_dims)
 
         scale_bh = config.b_dims[-1][0] / self.b_dims[0]
         scale_def = config.c_dims[-1][0] / self.c_dims[0]
