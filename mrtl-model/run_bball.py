@@ -290,10 +290,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
-            first = B_1[..., i].clone()
-            baseline = B_2[..., i].clone()
+            first = B_1[..., i].clone().detach()
+            baseline = B_2[..., i].clone().detach()
             for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
-                second = B_2[..., j].clone()
+                second = B_2[..., j].clone().detach()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -307,10 +307,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
-            first = B_2[..., i].clone()
-            baseline = B_3[..., i].clone()
+            first = B_2[..., i].clone().detach()
+            baseline = B_3[..., i].clone().detach()
             for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
-                second = B_3[..., j].clone()
+                second = B_3[..., j].clone().detach()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -324,10 +324,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
-            first = B_3[..., i].clone()
-            baseline = B_4[..., i].clone()
+            first = B_3[..., i].clone().detach()
+            baseline = B_4[..., i].clone().detach()
             for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
-                second = B_4[..., j].clone()
+                second = B_4[..., j].clone().detach()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -341,10 +341,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
-            first = C_1[..., i].clone()
-            baseline = C_2[..., i].clone()
+            first = C_1[..., i].clone().detach()
+            baseline = C_2[..., i].clone().detach()
             for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
-                second = C_2[..., j].clone()
+                second = C_2[..., j].clone().detach()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -358,10 +358,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
-            first = C_2[..., i].clone()
-            baseline = C_3[..., i].clone()
+            first = C_2[..., i].clone().detach()
+            baseline = C_3[..., i].clone().detach()
             for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
-                second = C_3[..., j].clone()
+                second = C_3[..., j].clone().detach()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -375,10 +375,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
-            first = C_3[..., i].clone()
-            baseline = C_4[..., i].clone()
+            first = C_3[..., i].clone().detach()
+            baseline = C_4[..., i].clone().detach()
             for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
-                second = C_4[..., j].clone()
+                second = C_4[..., j].clone().detach()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
