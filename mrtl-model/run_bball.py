@@ -294,8 +294,8 @@ if args.type == 'multi' or args.type == 'fixed':
             baseline = B_2[..., i]
             for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
                 second = B_2[..., j]
-                difference = np.linalg.norm(first - second)
-                max_difference = np.linalg.norm(first - baseline)
+                difference = np.linalg.norm((first - second).cpu())
+                max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
@@ -312,8 +312,8 @@ if args.type == 'multi' or args.type == 'fixed':
             baseline = B_3[..., i]
             for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
                 second = B_3[..., j]
-                difference = np.linalg.norm(first - second)
-                max_difference = np.linalg.norm(first - baseline)
+                difference = np.linalg.norm((first - second).cpu())
+                max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
@@ -330,8 +330,8 @@ if args.type == 'multi' or args.type == 'fixed':
             baseline = B_4[..., i]
             for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
                 second = B_4[..., j]
-                difference = np.linalg.norm(first - second)
-                max_difference = np.linalg.norm(first - baseline)
+                difference = np.linalg.norm((first - second).cpu())
+                max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
@@ -348,8 +348,8 @@ if args.type == 'multi' or args.type == 'fixed':
             baseline = C_2[..., i]
             for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
                 second = C_2[..., j]
-                difference = np.linalg.norm(first - second)
-                max_difference = np.linalg.norm(first - baseline)
+                difference = np.linalg.norm((first - second).cpu())
+                max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
@@ -366,8 +366,8 @@ if args.type == 'multi' or args.type == 'fixed':
             baseline = C_3[..., i]
             for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
                 second = C_3[..., j]
-                difference = np.linalg.norm(first - second)
-                max_difference = np.linalg.norm(first - baseline)
+                difference = np.linalg.norm((first - second).cpu())
+                max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
@@ -384,8 +384,8 @@ if args.type == 'multi' or args.type == 'fixed':
             baseline = C_4[..., i]
             for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
                 second = C_4[..., j]
-                difference = np.linalg.norm(first - second)
-                max_difference = np.linalg.norm(first - baseline)
+                difference = np.linalg.norm((first - second).cpu())
+                max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
