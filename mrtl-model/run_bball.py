@@ -290,102 +290,102 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
-            first = B_1[..., i].copy()
-            baseline = B_2[..., i].copy()
+            first = B_1[..., i].clone()
+            baseline = B_2[..., i].clone()
             for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
-                second = B_2[..., j].copy()
+                second = B_2[..., j].clone()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    np.copyto(B_2[..., i], second)
-                    np.copyto(B_2[..., j], baseline)
+                    B_2[..., i].copy_(second)
+                    B_2[..., j].copy_(baseline)
                     
     change = True
     
     while(change):
         change = False
         for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
-            first = B_2[..., i].copy()
-            baseline = B_3[..., i].copy()
+            first = B_2[..., i].clone()
+            baseline = B_3[..., i].clone()
             for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
-                second = B_3[..., j].copy()
+                second = B_3[..., j].clone()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    np.copyto(B_3[..., i], second)
-                    np.copyto(B_3[..., j], baseline)
+                    B_3[..., i].copy_(second)
+                    B_3[..., j].copy_(baseline)
                     
     change = True
     
     while(change):
         change = False
         for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
-            first = B_3[..., i].copy()
-            baseline = B_4[..., i].copy()
+            first = B_3[..., i].clone()
+            baseline = B_4[..., i].clone()
             for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
-                second = B_4[..., j].copy()
+                second = B_4[..., j].clone()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    np.copyto(B_4[..., i], second)
-                    np.copyto(B_4[..., j], baseline)
+                    B_4[..., i].copy_(second)
+                    B_4[..., j].copy_(baseline)
                     
     change = True
     
     while(change):
         change = False
         for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
-            first = C_1[..., i].copy()
-            baseline = C_2[..., i].copy()
+            first = C_1[..., i].clone()
+            baseline = C_2[..., i].clone()
             for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
-                second = C_2[..., j].copy()
+                second = C_2[..., j].clone()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    np.copyto(C_2[..., i], second)
-                    np.copyto(C_2[..., j], baseline)
+                    C_2[..., i].copy_(second)
+                    C_2[..., j].copy_(baseline)
                     
     change = True
     
     while(change):
         change = False
         for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
-            first = C_2[..., i].copy()
-            baseline = C_3[..., i].copy()
+            first = C_2[..., i].clone()
+            baseline = C_3[..., i].clone()
             for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
-                second = C_3[..., j].copy()
+                second = C_3[..., j].clone()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    np.copyto(C_3[..., i], second)
-                    np.copyto(C_3[..., j], baseline)
+                    C_3[..., i].copy_(second)
+                    C_3[..., j].copy_(baseline)
                     
     change = True
     
     while(change):
         change = False
         for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
-            first = C_3[..., i].copy()
-            baseline = C_4[..., i].copy()
+            first = C_3[..., i].clone()
+            baseline = C_4[..., i].clone()
             for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
-                second = C_4[..., j].copy()
+                second = C_4[..., j].clone()
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    np.copyto(C_4[..., i], second)
-                    np.copyto(C_4[..., j], baseline)
+                    C_4[..., i].copy_(second)
+                    C_4[..., j].copy_(baseline)
     
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
