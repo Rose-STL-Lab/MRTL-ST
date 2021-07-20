@@ -299,8 +299,8 @@ if args.type == 'multi' or args.type == 'fixed':
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    B_2[..., i].copy_(second)
-                    B_2[..., j].copy_(baseline)
+                    (B_2[..., i]).copy_(second)
+                    (B_2[..., j]).copy_(baseline)
                     
     change = True
     
