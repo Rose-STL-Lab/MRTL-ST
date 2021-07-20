@@ -5,6 +5,7 @@ import logging
 import os
 
 import torch
+import numpy as np
 
 import utils
 from config import config
@@ -282,6 +283,116 @@ if args.type == 'multi' or args.type == 'fixed':
     # Draw heatmaps after CP decomposition
     B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
     C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
+    
+    # Reorder latent factors for visualization
+    change = True
+    
+    while(change):
+        change = False
+        for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
+            first = B_1[..., i]
+            baseline = B_2[..., i]
+            for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
+                second = B_2[..., j]
+                difference = np.norm(first - second)
+                max_difference = np.norm(first - baseline)
+                if difference < max_difference:
+                    change = True
+                    max_difference = difference
+                    temp = baseline
+                    B_2[..., i] = second
+                    B_2[..., j] = temp
+                    
+    change = True
+    
+    while(change):
+        change = False
+        for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
+            first = B_2[..., i]
+            baseline = B_3[..., i]
+            for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
+                second = B_3[..., j]
+                difference = np.norm(first - second)
+                max_difference = np.norm(first - baseline)
+                if difference < max_difference:
+                    change = True
+                    max_difference = difference
+                    temp = baseline
+                    B_3[..., i] = second
+                    B_3[..., j] = temp
+                    
+    change = True
+    
+    while(change):
+        change = False
+        for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
+            first = B_3[..., i]
+            baseline = B_4[..., i]
+            for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
+                second = B_4[..., j]
+                difference = np.norm(first - second)
+                max_difference = np.norm(first - baseline)
+                if difference < max_difference:
+                    change = True
+                    max_difference = difference
+                    temp = baseline
+                    B_4[..., i] = second
+                    B_4[..., j] = temp
+                    
+    change = True
+    
+    while(change):
+        change = False
+        for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
+            first = C_1[..., i]
+            baseline = C_2[..., i]
+            for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
+                second = C_2[..., j]
+                difference = np.norm(first - second)
+                max_difference = np.norm(first - baseline)
+                if difference < max_difference:
+                    change = True
+                    max_difference = difference
+                    temp = baseline
+                    C_2[..., i] = second
+                    C_2[..., j] = temp
+                    
+    change = True
+    
+    while(change):
+        change = False
+        for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
+            first = C_2[..., i]
+            baseline = C_3[..., i]
+            for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
+                second = C_3[..., j]
+                difference = np.norm(first - second)
+                max_difference = np.norm(first - baseline)
+                if difference < max_difference:
+                    change = True
+                    max_difference = difference
+                    temp = baseline
+                    C_3[..., i] = second
+                    C_3[..., j] = temp
+                    
+    change = True
+    
+    while(change):
+        change = False
+        for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
+            first = C_3[..., i]
+            baseline = C_4[..., i]
+            for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
+                second = C_4[..., j]
+                difference = np.norm(first - second)
+                max_difference = np.norm(first - baseline)
+                if difference < max_difference:
+                    change = True
+                    max_difference = difference
+                    temp = baseline
+                    C_4[..., i] = second
+                    C_4[..., j] = temp
+    
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
