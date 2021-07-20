@@ -290,10 +290,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
-            first = torch.tensor(B_1[..., i].numpy())
-            baseline = torch.tensor(B_2[..., i].numpy())
+            first = torch.tensor(B_1[..., i].cpu().numpy())
+            baseline = torch.tensor(B_2[..., i].cpu().numpy())
             for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
-                second = torch.tensor(B_2[..., j].numpy())
+                second = torch.tensor(B_2[..., j].cpu().numpy())
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -307,10 +307,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
-            first = torch.tensor(B_2[..., i].numpy())
-            baseline = torch.tensor(B_3[..., i].numpy())
+            first = torch.tensor(B_2[..., i].cpu().numpy())
+            baseline = torch.tensor(B_3[..., i].cpu().numpy())
             for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
-                second = torch.tensor(B_3[..., j].numpy())
+                second = torch.tensor(B_3[..., j].cpu().numpy())
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -324,10 +324,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
-            first = torch.tensor(B_3[..., i].numpy())
-            baseline = torch.tensor(B_4[..., i].numpy())
+            first = torch.tensor(B_3[..., i].cpu().numpy())
+            baseline = torch.tensor(B_4[..., i].cpu().numpy())
             for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
-                second = torch.tensor(B_4[..., j].numpy())
+                second = torch.tensor(B_4[..., j].cpu().numpy())
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -341,10 +341,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
-            first = torch.tensor(C_1[..., i].numpy())
-            baseline = torch.tensor(C_2[..., i].numpy())
+            first = torch.tensor(C_1[..., i].cpu().numpy())
+            baseline = torch.tensor(C_2[..., i].cpu().numpy())
             for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
-                second = torch.tensor(C_2[..., j].numpy())
+                second = torch.tensor(C_2[..., j].cpu().numpy())
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -358,10 +358,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
-            first = torch.tensor(C_2[..., i].numpy())
-            baseline = torch.tensor(C_3[..., i].numpy())
+            first = torch.tensor(C_2[..., i].cpu().numpy())
+            baseline = torch.tensor(C_3[..., i].cpu().numpy())
             for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
-                second = torch.tensor(C_3[..., j].numpy())
+                second = torch.tensor(C_3[..., j].cpu().numpy())
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
@@ -375,10 +375,10 @@ if args.type == 'multi' or args.type == 'fixed':
     while(change):
         change = False
         for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
-            first = torch.tensor(C_3[..., i].numpy())
-            baseline = torch.tensor(C_4[..., i].numpy())
+            first = torch.tensor(C_3[..., i].cpu().numpy())
+            baseline = torch.tensor(C_4[..., i].cpu().numpy())
             for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
-                second = torch.tensor(C_4[..., j].numpy())
+                second = torch.tensor(C_4[..., j].cpu().numpy())
                 difference = np.linalg.norm((first - second).cpu())
                 max_difference = np.linalg.norm((first - baseline).cpu())
                 if difference < max_difference:
