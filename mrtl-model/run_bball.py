@@ -299,8 +299,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 if difference < max_difference:
                     change = True
                     max_difference = difference
-                    (B_2[..., i]).copy_(second)
-                    (B_2[..., j]).copy_(baseline)
+                    B_2[..., i].copy_(second)
+                    B_2[..., j].copy_(baseline)
+                    baseline = second
                     
     change = True
     
@@ -318,6 +319,7 @@ if args.type == 'multi' or args.type == 'fixed':
                     max_difference = difference
                     B_3[..., i].copy_(second)
                     B_3[..., j].copy_(baseline)
+                    baseline = second
                     
     change = True
     
@@ -335,6 +337,7 @@ if args.type == 'multi' or args.type == 'fixed':
                     max_difference = difference
                     B_4[..., i].copy_(second)
                     B_4[..., j].copy_(baseline)
+                    baseline = second
                     
     change = True
     
@@ -352,6 +355,7 @@ if args.type == 'multi' or args.type == 'fixed':
                     max_difference = difference
                     C_2[..., i].copy_(second)
                     C_2[..., j].copy_(baseline)
+                    baseline = second
                     
     change = True
     
@@ -369,6 +373,7 @@ if args.type == 'multi' or args.type == 'fixed':
                     max_difference = difference
                     C_3[..., i].copy_(second)
                     C_3[..., j].copy_(baseline)
+                    baseline = second
                     
     change = True
     
@@ -386,6 +391,7 @@ if args.type == 'multi' or args.type == 'fixed':
                     max_difference = difference
                     C_4[..., i].copy_(second)
                     C_4[..., j].copy_(baseline)
+                    baseline = second
     
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
