@@ -300,10 +300,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 max_difference = np.linalg.norm((second - candidate).cpu())
                 if difference < max_difference and difference < base_difference:
                     change = True
-                    max_difference = difference
-                    B_2[..., i].copy_(second)
+                    B_2[..., i].copy_(candidate)
                     B_2[..., j].copy_(baseline)
-                    baseline = torch.tensor(B_2[..., i].cpu().numpy().copy())
+                    baseline = candidate
                     
     change = True
     
@@ -320,10 +319,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 max_difference = np.linalg.norm((second - candidate).cpu())
                 if difference < max_difference and difference < base_difference:
                     change = True
-                    max_difference = difference
-                    B_3[..., i].copy_(second)
+                    B_3[..., i].copy_(candidate)
                     B_3[..., j].copy_(baseline)
-                    baseline = torch.tensor(B_3[..., i].cpu().numpy().copy())
+                    baseline = candidate
                     
     change = True
     
@@ -340,10 +338,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 max_difference = np.linalg.norm((second - candidate).cpu())
                 if difference < max_difference and difference < base_difference:
                     change = True
-                    max_difference = difference
-                    B_4[..., i].copy_(second)
+                    B_4[..., i].copy_(candidate)
                     B_4[..., j].copy_(baseline)
-                    baseline = torch.tensor(B_4[..., i].cpu().numpy().copy())
+                    baseline = candidate
                     
     change = True
     
@@ -360,10 +357,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 max_difference = np.linalg.norm((second - candidate).cpu())
                 if difference < max_difference and difference < base_difference:
                     change = True
-                    max_difference = difference
-                    C_2[..., i].copy_(second)
+                    C_2[..., i].copy_(candidate)
                     C_2[..., j].copy_(baseline)
-                    baseline = torch.tensor(C_2[..., i].cpu().numpy().copy())
+                    baseline = candidate
                     
     change = True
     
@@ -380,10 +376,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 max_difference = np.linalg.norm((second - candidate).cpu())
                 if difference < max_difference and difference < base_difference:
                     change = True
-                    max_difference = difference
-                    C_3[..., i].copy_(second)
+                    C_3[..., i].copy_(candidate)
                     C_3[..., j].copy_(baseline)
-                    baseline = torch.tensor(C_3[..., i].cpu().numpy().copy())
+                    baseline = candidate
                     
     change = True
     
@@ -400,10 +395,9 @@ if args.type == 'multi' or args.type == 'fixed':
                 max_difference = np.linalg.norm((second - candidate).cpu())
                 if difference < max_difference and difference < base_difference:
                     change = True
-                    max_difference = difference
-                    C_4[..., i].copy_(second)
+                    C_4[..., i].copy_(candidate)
                     C_4[..., j].copy_(baseline)
-                    baseline = torch.tensor(C_4[..., i].cpu().numpy().copy())
+                    baseline = candidate
     
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
