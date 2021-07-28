@@ -416,7 +416,9 @@ class BasketballMulti:
                     reg = self.params['reg_coeff'] * (
                         utils.bball_spatial_regularizer(
                             self.model, self.K_B, self.K_C, self.device) +
-                        utils.l2_regularizer(self.model, self.device))
+                            utils.bball_temporal_regularizer(
+                            self.model, self.device) + utils.l2_regularizer(
+                            self.model, self.device))
 #                     reg = self.params['reg_coeff'] #* (utils.l2_regularizer(self.model, self.device))
                     
                     
@@ -426,7 +428,9 @@ class BasketballMulti:
                     reg = self.params['reg_coeff'] * (
                         utils.bball_spatial_regularizer(
                             self.model, self.K_B, self.K_C, self.device) +
-                        utils.l2_regularizer(self.model, self.device))
+                            utils.bball_temporal_regularizer(
+                            self.model, self.device) + utils.l2_regularizer(
+                            self.model, self.device))
                 if i == 0:
                     logger.info(
                         "TRAIN | Step {0} | Loss={1:0.6f}, Reg={2:0.6f}".
