@@ -239,41 +239,47 @@ def bball_temporal_regularizer(model, device):
         W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
 
         # W_2 - W_1
-        reg.add_(torch.abs(W_2 - W_1).sum())
+        reg.add_(torch.pow((W_2 - W_1), 2).sum())
         
         # W_3 - W_2
-        reg.add_(torch.abs(W_3 - W_2).sum())
+        reg.add_(torch.pow((W_3 - W_2), 2).sum())
         
         # W_4 - W_3
-        reg.add_(torch.abs(W_4 - W_3).sum())
+        reg.add_(torch.pow((W_4 - W_3), 2).sum())
         
-        reg = reg/3.0
+        # Additional term
+        reg.add_((pow(torch.norm(W_1), 2) + pow(torch.norm(W_2), 2) +
+            pow(torch.norm(W_3), 2) + pow(torch.norm(W_4), 2)) * pow(10, -10))
     else:
         # Split B and C into quarters
         B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
         C_1, C_2, C_3, C_4 = torch.chunk(model.C, 4, 0)
 
         # B_2 - B_1
-        reg.add_(torch.abs(B_2 - B_1).sum())
+        reg.add_(torch.pow((B_2 - B_1), 2).sum())
         
         # B_3 - B_2
-        reg.add_(torch.abs(B_3 - B_2).sum())
+        reg.add_(torch.pow((B_3 - B_2), 2).sum())
         
         # B_4 - B_3
-        reg.add_(torch.abs(B_4 - B_3).sum())
+        reg.add_(torch.pow((B_4 - B_3), 2).sum())
         
         # C_2 - C_1
-        reg.add_(torch.abs(C_2 - C_1).sum())
+        reg.add_(torch.pow((C_2 - C_1), 2).sum())
         
         # C_3 - C_2
-        reg.add_(torch.abs(C_3 - C_2).sum())
+        reg.add_(torch.pow((C_3 - C_2), 2).sum())
         
         # C_4 - C_3
-        reg.add_(torch.abs(C_4 - C_3).sum())
+        reg.add_(torch.pow((C_4 - C_3), 2).sum())
         
-        reg = reg/6.0
+        # Additional term
+        reg.add_((pow(torch.norm(B_1), 2) + pow(torch.norm(B_2), 2) +
+            pow(torch.norm(B_3), 2) + pow(torch.norm(B_4), 2) +
+            pow(torch.norm(C_1), 2) + pow(torch.norm(C_2), 2) +
+            pow(torch.norm(C_3), 2) + pow(torch.norm(C_4), 2)) * pow(10, -10))
 
-    return reg
+    return reg/2.0
 
 def class_counts(dataset):
     _, counts = np.unique(dataset.y, return_counts=True)
