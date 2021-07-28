@@ -239,35 +239,35 @@ def bball_temporal_regularizer(model, device):
         W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
 
         # W_2 - W_1
-        reg.add_(np.abs(W_2 - W_1).sum())
+        reg.add_(torch.abs(W_2 - W_1).sum())
         
         # W_3 - W_2
-        reg.add_(np.abs(W_3 - W_2).sum())
+        reg.add_(torch.abs(W_3 - W_2).sum())
         
         # W_4 - W_3
-        reg.add_(np.abs(W_4 - W_3).sum())
+        reg.add_(torch.abs(W_4 - W_3).sum())
     else:
         # Split B and C into quarters
         B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
         C_1, C_2, C_3, C_4 = torch.chunk(model.C, 4, 0)
 
         # B_2 - B_1
-        reg.add_(np.abs(B_2 - B_1).sum())
+        reg.add_(torch.abs(B_2 - B_1).sum())
         
         # B_3 - B_2
-        reg.add_(np.abs(B_3 - B_2).sum())
+        reg.add_(torch.abs(B_3 - B_2).sum())
         
         # B_4 - B_3
-        reg.add_(np.abs(B_4 - B_3).sum())
+        reg.add_(torch.abs(B_4 - B_3).sum())
         
         # C_2 - C_1
-        reg.add_(np.abs(C_2 - C_1).sum())
+        reg.add_(torch.abs(C_2 - C_1).sum())
         
         # C_3 - C_2
-        reg.add_(np.abs(C_3 - C_2).sum())
+        reg.add_(torch.abs(C_3 - C_2).sum())
         
         # C_4 - C_3
-        reg.add_(np.abs(C_4 - C_3).sum())
+        reg.add_(torch.abs(C_4 - C_3).sum())
 
     return reg
 
