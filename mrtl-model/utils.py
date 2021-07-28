@@ -246,6 +246,8 @@ def bball_temporal_regularizer(model, device):
         
         # W_4 - W_3
         reg.add_(torch.abs(W_4 - W_3).sum())
+        
+        reg = reg/3.0
     else:
         # Split B and C into quarters
         B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
@@ -268,6 +270,8 @@ def bball_temporal_regularizer(model, device):
         
         # C_4 - C_3
         reg.add_(torch.abs(C_4 - C_3).sum())
+        
+        reg = reg/6.0
 
     return reg
 
