@@ -247,6 +247,18 @@ def bball_temporal_regularizer(model, device):
         # W_4 - W_3
         reg.add_(torch.pow((W_4 - W_3), 2).sum())
         
+        # Split W into quarters
+        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 3)
+
+        # W_2 - W_1
+        reg.add_(torch.pow((W_2 - W_1), 2).sum())
+        
+        # W_3 - W_2
+        reg.add_(torch.pow((W_3 - W_2), 2).sum())
+        
+        # W_4 - W_3
+        reg.add_(torch.pow((W_4 - W_3), 2).sum())
+        
         # Additional term
         reg.add_((pow(torch.norm(W_1), 2) + pow(torch.norm(W_2), 2) +
             pow(torch.norm(W_3), 2) + pow(torch.norm(W_4), 2)) * pow(10, -10))
