@@ -16,7 +16,7 @@ multi_full_lr=5e-3
 multi_full_reg=5e-2
 multi_low_lr=2e-2
 multi_low_reg=2e-1
-delta = 0.0004
+delta=0.0004
 
 num_trials=10
 
