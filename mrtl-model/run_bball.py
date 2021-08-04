@@ -34,6 +34,7 @@ parser.add_argument('--full-lr', dest='full_lr', type=float)
 parser.add_argument('--full-reg', dest='full_reg', type=float)
 parser.add_argument('--low-lr', dest='low_lr', type=float)
 parser.add_argument('--low-reg', dest='low_reg', type=float)
+parser.add_argument('--delta', dest='delta', type=float)
 args = parser.parse_args()
 
 # Parameters

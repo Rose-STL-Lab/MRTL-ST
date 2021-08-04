@@ -135,6 +135,9 @@ class BasketballMulti:
                                            self.params['sigma'], self.device)
             self.K_C = utils.create_kernel([self.dims[1][0]//4, self.dims[1][1]], self.params['sigma'],
                                            self.device)
+            
+        if 'delta' in self.params:
+            self.delta = self.params['delta']
 
     def init_loaders(self, train_set, val_set):
 #         print("PLS")
@@ -416,7 +419,7 @@ class BasketballMulti:
                     reg = self.params['reg_coeff'] * (
                         utils.bball_spatial_regularizer(
                             self.model, self.K_B, self.K_C, self.device) +
-                            utils.bball_temporal_regularizer(
+                            self.delta * utils.bball_temporal_regularizer(
                             self.model, self.device) + utils.l2_regularizer(
                             self.model, self.device))
 #                     reg = self.params['reg_coeff'] #* (utils.l2_regularizer(self.model, self.device))
@@ -428,7 +431,7 @@ class BasketballMulti:
                     reg = self.params['reg_coeff'] * (
                         utils.bball_spatial_regularizer(
                             self.model, self.K_B, self.K_C, self.device) +
-                            utils.bball_temporal_regularizer(
+                            self.delta * utils.bball_temporal_regularizer(
                             self.model, self.device) + utils.l2_regularizer(
                             self.model, self.device))
                 if i == 0:
