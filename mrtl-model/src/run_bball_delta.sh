@@ -24,7 +24,7 @@ for ((i = 1; i <= num_trials; i++)); do
   echo "Trial ${i}: Prepare"
   python3 "prepare_bball.py" --root-dir "${root_dir}/${i}" --data-dir "${data_dir}"
   echo "Trial ${i}: Val Loss Increase"
-  python3 "run_bball.py" --root-dir "${root_dir}/${i}/deltas" --data-dir "${data_dir}" --type "multi" --stop-cond "val_loss_increase" \
+  python3 "run_bball_deltas.py" --root-dir "${root_dir}/${i}/deltas" --data-dir "${data_dir}" --type "multi" --stop-cond "val_loss_increase" \
   --batch-size "${batch_size}" --sigma "${sigma}" --K "${K}" --step-size "${step_size}" --gamma "${gamma}" \
   --full-lr "${multi_full_lr}" --full-reg "${multi_full_reg}" --low-lr "${multi_low_lr}" --low-reg "${multi_low_reg}" --delta "${delta}"
 
