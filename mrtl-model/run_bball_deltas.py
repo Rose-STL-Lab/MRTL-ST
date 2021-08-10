@@ -77,7 +77,7 @@ for i in range(5):
     # Adjust delta
     hyper['delta'] = params['delta'] + 0.0001 * i
     
-    print("Trial " + (i + 1) + ", delta = " + hyper['delta'])
+    print("Trial " + str(i + 1) + ", delta = " + str(hyper['delta']))
     
     # Results
     results = {
