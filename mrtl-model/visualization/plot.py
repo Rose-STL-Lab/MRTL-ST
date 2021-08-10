@@ -225,6 +225,7 @@ def loss_time(train_times, train_loss, val_times, val_loss, low_index=None, fp_f
     plt.xlim(xmin=0)
     if fp_fig is not None:
         plt.savefig(fp_fig)
+        plt.close()
     return fig
 
 
@@ -253,15 +254,16 @@ def F1_time(times, F1, low_index=None, fp_fig=None):
     plt.ylim(ymin=0)
     if fp_fig is not None:
         plt.savefig(fp_fig)
+        plt.close()
     return fig
 
 def F1_deltas(deltas, F1, low_index=None, fp_fig=None):
     fig = plt.figure(figsize=(8, 8))
 
-    t = copy.deepcopy(deltas)
+    d = copy.deepcopy(deltas)
 
-    lines = [row[-1][-1] for row in t]
-    plt.plot(np.concatenate(t).ravel(), np.concatenate(F1).ravel())
+    lines = [row for row in d]
+    plt.plot(np.concatenate(d).ravel(), np.concatenate(F1).ravel())
     for i, x in enumerate(lines[:-1]):
         if low_index is not None and i == (low_index - 1):
             color = 'r'
@@ -271,9 +273,9 @@ def F1_deltas(deltas, F1, low_index=None, fp_fig=None):
     plt.xlabel('Delta')
     plt.ylabel('Test F1')
     plt.xlim(xmin=0)
-    plt.ylim(ymin=0)
     if fp_fig is not None:
         plt.savefig(fp_fig)
+        plt.close()
     return fig
 
 def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
@@ -312,5 +314,5 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
 
     if fp_fig is not None:
         plt.savefig(fp_fig)
-    plt.close()
+        plt.close()
     return fig
