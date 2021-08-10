@@ -263,7 +263,7 @@ def F1_deltas(deltas, F1, low_index=None, fp_fig=None):
     d = copy.deepcopy(deltas)
 
     lines = [row for row in d]
-    plt.plot(np.concatenate(d).ravel(), np.concatenate(F1).ravel())
+    plt.plot(d, F1)
     for i, x in enumerate(lines[:-1]):
         if low_index is not None and i == (low_index - 1):
             color = 'r'
