@@ -919,5 +919,6 @@ for i in range(5):
 
     main_logger.info('FINISH')
 
+fp_fig = os.path.join(fig_dir, "deltas_vs_F1.png")
 plot.F1_deltas(deltas, final_F1, low_index=results['low_start_idx'],
                  fp_fig=fp_fig)
