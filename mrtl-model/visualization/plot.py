@@ -255,6 +255,26 @@ def F1_time(times, F1, low_index=None, fp_fig=None):
         plt.savefig(fp_fig)
     return fig
 
+def F1_deltas(deltas, F1, low_index=None, fp_fig=None):
+    fig = plt.figure(figsize=(8, 8))
+
+    t = copy.deepcopy(deltas)
+
+    lines = [row[-1][-1] for row in t]
+    plt.plot(np.concatenate(t).ravel(), np.concatenate(F1).ravel())
+    for i, x in enumerate(lines[:-1]):
+        if low_index is not None and i == (low_index - 1):
+            color = 'r'
+        else:
+            color = 'k'
+        plt.axvline(x, color=color, linestyle=':')
+    plt.xlabel('Delta')
+    plt.ylabel('Test F1')
+    plt.xlim(xmin=0)
+    plt.ylim(ymin=0)
+    if fp_fig is not None:
+        plt.savefig(fp_fig)
+    return fig
 
 def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
     if draw_court:

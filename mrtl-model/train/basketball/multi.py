@@ -136,6 +136,7 @@ class BasketballMulti:
             self.K_C = utils.create_kernel([self.dims[1][0]//4, self.dims[1][1]], self.params['sigma'],
                                            self.device)
             
+        # Temporal regularization coefficient
         if 'delta' in self.params:
             self.delta = self.params['delta']
 
