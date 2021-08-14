@@ -257,19 +257,16 @@ def F1_time(times, F1, low_index=None, fp_fig=None):
         plt.close()
     return fig
 
-def F1_deltas(deltas, F1, low_index=None, fp_fig=None):
+def F1_deltas(deltas, full_F1, low_F1, low_index=None, fp_fig=None):
     fig = plt.figure(figsize=(8, 8))
 
     d = copy.deepcopy(deltas)
 
     lines = [row for row in d]
-    plt.plot(d, F1)
+    plt.plot(d, full_F1, label='Full-rank')
+    plt.plot(d, full_F1, label='Low-rank')
     for i, x in enumerate(lines[:-1]):
-        if low_index is not None and i == (low_index - 1):
-            color = 'r'
-        else:
-            color = 'k'
-        plt.axvline(x, color=color, linestyle=':')
+        plt.axvline(x, color='k', linestyle=':')
     plt.xlabel('Delta')
     plt.ylabel('Test F1')
     plt.xlim(xmin=0)

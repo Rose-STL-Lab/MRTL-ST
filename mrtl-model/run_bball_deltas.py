@@ -38,7 +38,8 @@ parser.add_argument('--delta', dest='delta', type=float)
 args = parser.parse_args()
 
 # Lists of F1 scores and deltas
-final_F1 = []
+full_F1 = []
+low_F1 = []
 deltas = []
 
 # Parameters
@@ -262,6 +263,9 @@ for i in range(5):
 
             prev_b = b
             prev_c = c
+            
+        # Save full-rank test F1 score
+        full_F1.append(test_F1)
             
         # Draw plots for full rank train
         fp_fig = os.path.join(fig_dir, "full_time_vs_loss.png")
@@ -914,11 +918,13 @@ for i in range(5):
     # Save results
     torch.save(results, os.path.join(save_dir, "results.pt"))
     
-    final_F1.append(results['test_F1'][-1])
+    # Save low-rank test F1 score and delta
+    
+    low_F1.append(results['test_F1'][-1])
     deltas.append(hyper['delta'])
 
     main_logger.info('FINISH')
 
 fp_fig = os.path.join(fig_dir, "deltas_vs_F1.png")
-plot.F1_deltas(deltas, final_F1, low_index=results['low_start_idx'],
+plot.F1_deltas(deltas, full_F1, low,F1, low_index=results['low_start_idx'],
                  fp_fig=fp_fig)
