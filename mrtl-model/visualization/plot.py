@@ -264,7 +264,7 @@ def F1_deltas(deltas, full_F1, low_F1, low_index=None, fp_fig=None):
 
     lines = [row for row in d]
     plt.plot(d, full_F1, label='Full-rank')
-    plt.plot(d, full_F1, label='Low-rank')
+    plt.plot(d, low_F1, label='Low-rank')
     for i, x in enumerate(lines[:-1]):
         plt.axvline(x, color='k', linestyle=':')
     plt.xlabel('Delta')
