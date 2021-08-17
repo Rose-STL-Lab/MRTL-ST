@@ -66,10 +66,10 @@ class BasketballMulti:
 
     def init_full_model(self, train_set):
         counts = utils.class_counts(train_set)
-        self.dims = [train_set.b_dims, train_set.c_dims] #######
-        self.time_dim = train_set.t_dims
+        self.dims = [train_set.b_dims, train_set.c_dims]
+        self.style_dim = train_set.f_dims
         
-        self.model = model.Full(train_set.a_dims, train_set.t_dims,
+        self.model = model.Full(train_set.a_dims, train_set.f_dims,
                                 train_set.b_dims, train_set.c_dims, counts)
         if torch.cuda.device_count() > 1:
             logger.info(f'Using {torch.cuda.device_count()} GPUs')
@@ -83,14 +83,14 @@ class BasketballMulti:
             torch.zeros_like(self.model.W.cpu(),
                              dtype=torch.float32).to(self.device))
 
-        self.scale = (train_set.b_dims[1] / 5.) * (train_set.c_dims[0] / 6.) ########
+        self.scale = (train_set.b_dims[1] / 5.) * (train_set.c_dims[0] / 6.)
 
     def init_low_model(self, train_set, K):
         counts = utils.class_counts(train_set)
         self.dims = [train_set.b_dims, train_set.c_dims]
-        self.time_dim = train_set.t_dims
+        self.style_dim = train_set.f_dims
 
-        self.model = model.Low(train_set.a_dims, train_set.t_dims,
+        self.model = model.Low(train_set.a_dims, train_set.f_dims,
                                train_set.b_dims, train_set.c_dims, K, counts)
         if torch.cuda.device_count() > 1:
             logger.info(f'Using {torch.cuda.device_count()} GPUs')
@@ -101,7 +101,7 @@ class BasketballMulti:
             torch.zeros_like(self.model.A,
                              dtype=torch.float32).to(self.device))
         self.accum_gradients.append(
-            torch.zeros_like(self.model.T,
+            torch.zeros_like(self.model.F,
                              dtype=torch.float32).to(self.device))
         self.accum_gradients.append(
             torch.zeros_like(self.model.B,
@@ -113,7 +113,7 @@ class BasketballMulti:
             torch.zeros_like(self.model.A,
                              dtype=torch.float32).to(self.device))
         self.gradients.append(
-            torch.zeros_like(self.model.T,
+            torch.zeros_like(self.model.F,
                              dtype=torch.float32).to(self.device))
         self.gradients.append(
             torch.zeros_like(self.model.B,
@@ -188,7 +188,7 @@ class BasketballMulti:
 
     def train_and_evaluate(self, save_dir=None):
         logger.info('TRAIN BEGIN | {0}: {1},{2},{3}, {4}'.format(
-            type(self.model).__name__, self.model.a_dims, self.model.t_dims, 
+            type(self.model).__name__, self.model.a_dims, self.model.f_dims, 
             self.dims[0], self.dims[1]))
         logger.info('TRAIN | Optim: {0}, params:{1}'.format(
             type(self.optimizer).__name__, self.params))
@@ -286,7 +286,7 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.time_dim, 
+                                type(self.model).__name__, self.style_dim, 
                                 self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
@@ -298,7 +298,7 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.time_dim,
+                                type(self.model).__name__, self.style_dim,
                                 self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
@@ -310,7 +310,7 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.time_dim, 
+                                type(self.model).__name__, self.style_dim, 
                                 self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
@@ -322,7 +322,7 @@ class BasketballMulti:
                         logger.info(
                             'TRAIN FINISH | {0}: {1},{2} | Epochs: {3} | Stop criterion: {4}'
                             .format(
-                                type(self.model).__name__, self.time_dim, 
+                                type(self.model).__name__, self.style_dim, 
                                 self.dims[0], self.dims[1], epochs,
                                 self.params['stop_cond']))
                         break
@@ -403,7 +403,7 @@ class BasketballMulti:
                 os.path.join(
                     save_dir, "multi_{0}_{1},{2}.pt".format(
                         type(self.model).__name__.lower(),
-                        str(self.time_dim),
+                        str(self.style_dim),
                         utils.size_to_str(self.dims[0]),
                         utils.size_to_str(self.dims[1]))))
 
@@ -422,10 +422,10 @@ class BasketballMulti:
             self.gradients[i].zero_()
 
         self.model.train()
-        for i, (a, t, bh_pos, def_pos, y) in enumerate(self.train_loader):
+        for i, (a, f, bh_pos, def_pos, y) in enumerate(self.train_loader):
             a = a.to(self.device)
             # T
-            t = t.to(self.device)
+            f = f.to(self.device)
             # T'
             bh_pos = bh_pos.to(self.device)
             def_pos = def_pos.to(self.device)
@@ -437,7 +437,7 @@ class BasketballMulti:
             self.optimizer.zero_grad()
 
             # Forward pass
-            outputs = self.model(a, t, bh_pos, def_pos)
+            outputs = self.model(a, f, bh_pos, def_pos)
 
             # Compute loss
             loss = self.loss_fn(outputs, y.float())
@@ -523,14 +523,14 @@ class BasketballMulti:
 
         self.model.eval()
         with torch.no_grad():
-            for i, (a, t, bh_pos, def_pos, y) in enumerate(self.val_loader):
+            for i, (a, f, bh_pos, def_pos, y) in enumerate(self.val_loader):
                 a = a.to(self.device)
-                t = t.to(self.device)
+                f = f.to(self.device)
                 bh_pos = bh_pos.to(self.device)
                 def_pos = def_pos.to(self.device)
                 y = y.to(self.device)
 
-                outputs = self.model(a, t, bh_pos, def_pos)
+                outputs = self.model(a, f, bh_pos, def_pos)
 
                 # Compute loss
                 loss = self.loss_fn(outputs, y.float())
@@ -623,14 +623,14 @@ class BasketballMulti:
 
         self.model.eval()
         with torch.no_grad():
-            for i, (a, t, bh_pos, def_pos, y) in enumerate(test_loader):
+            for i, (a, f, bh_pos, def_pos, y) in enumerate(test_loader):
                 a = a.to(self.device)
-                t = t.to(self.device)
+                f = f.to(self.device)
                 bh_pos = bh_pos.to(self.device)
                 def_pos = def_pos.to(self.device)
                 y = y.to(self.device)
 
-                outputs = self.model(a, t, bh_pos, def_pos)
+                outputs = self.model(a, f, bh_pos, def_pos)
 
                 # Update confusion matrix
                 preds = (outputs > self.decision_threshold).bool()

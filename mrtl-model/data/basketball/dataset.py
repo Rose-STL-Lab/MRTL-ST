@@ -27,16 +27,14 @@ class BballRawDataset(torch.utils.data.Dataset):
         self.a_dims = len(np.unique(self.data.loc[:, 'a']))
         self.b_dims = None
         self.c_dims = None
-        # T
-        self.t_dims = None
-        # T'
+        # F
+        self.f_dims = None
 
         self.a = self.data.loc[:, 'a'].astype(np.int16).to_numpy()
         self.bh_pos = None
         self.def_pos = None
-        # T
-        self.time = None
-        # T'
+        # F
+        self.style = None
         self.y = self.data.loc[:, 'shoot_label'].astype(np.uint8).to_numpy()
 
     def calculate_pos(self, b_dims, c_dims):
@@ -83,8 +81,8 @@ class BballRawDataset(torch.utils.data.Dataset):
 
         self.def_pos = mask.numpy().astype(np.uint8)
         
-    # T
-    def calculate_time(self, t_dims):
+    # F
+    def calculate_style(self, f_dims):
         
 #         print('self.data.loc[:, "quarter"]', self.data.loc[:, 'quarter'])
         
@@ -94,16 +92,15 @@ class BballRawDataset(torch.utils.data.Dataset):
 #             self.time = self.data.loc[:, 'quarter']
         
         
-        self.t_dims = t_dims
-        scale_time = config.t_dims[-1] / self.t_dims
-        # Scale time
-        self.time = (self.data.loc[:, 'quarter'] / scale_time).astype(np.uint8).to_numpy()
-#         print('time', self.time)
-    # T'
+        self.f_dims = f_dims
+        scale_style = config.f_dims[-1] / self.f_dims
+        # Scale style
+        self.style = (self.data.loc[:, 'bh_playstyle'] / scale_style).astype(
+            np.uint8).to_numpy()
 
     def __len__(self):
         return self.data.shape[0]
 
     def __getitem__(self, idx):
-        return self.a[idx], self.time[idx], self.bh_pos[
+        return self.a[idx], self.style[idx], self.bh_pos[
             idx, :], self.def_pos[idx, :, :], self.y[idx]

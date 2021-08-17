@@ -1,6 +1,6 @@
 b_dims = [[4, 5], [8, 10], [20, 25], [40, 50]]
 c_dims = [[6, 6], [12, 12]]
-t_dims = [1, 4]
+f_dims = [1, 6]
 
 train_percent = 0.6
 val_percent = 0.2
@@ -12,5 +12,5 @@ fn_test = 'test_40x50.pkl'
 parent_logger_name = "mrtl"
 
 num_workers = 6
-max_epochs = 100
+max_epochs = 50
 

@@ -99,17 +99,17 @@ if args.type == 'multi':
                        
                        [[8, 10], [12, 12]], [[20, 25], [12, 12]],
                        [[40, 50], [12, 12]]]  # Low rank
-    results['time_dims'] = [1, 4]
+    results['style_dims'] = [1, 6]
     results['low_start_idx'] = 3
     results['low_start_time_idx'] = 2
 elif args.type == 'fixed':
     results['dims'] = [[[40, 50], [12, 12]], [[40, 50], [12, 12]]]
-    results['time_dims'] = [4, 4]
+    results['style_dims'] = [6, 6]
     results['low_start_idx'] = 1
     results['low_start_time_idx'] = 1
 elif args.type == 'rand':
     results['dims'] = [[[40, 50], [12, 12]]]
-    results['time_dims'] = [4]
+    results['style_dims'] = [6]
     results['low_start_idx'] = 0
     results['low_start_time_idx'] = 0
 
@@ -121,13 +121,13 @@ test_set = BballRawDataset(os.path.join(args.data_dir, config.fn_test))
 if args.type == 'multi' or args.type == 'fixed':
     
 #   for t in results['time_dims'][0:results['low_start_time_idx']]:
-    t = results['time_dims'][0]
+    f = results['style_dims'][0]
     
-    train_set.calculate_time(t)
-    val_set.calculate_time(t)
-    test_set.calculate_time(t)
+    train_set.calculate_style(f)
+    val_set.calculate_style(f)
+    test_set.calculate_style(f)
     
-    t_str = str(t)
+    f_str = str(f)
 
     # Full-rank first resolution
     b = results['dims'][0][0]
@@ -138,7 +138,7 @@ if args.type == 'multi' or args.type == 'fixed':
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
     # T
-    t_str = str(t)
+    f_str = str(f)
     # T'
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
@@ -193,7 +193,7 @@ if args.type == 'multi' or args.type == 'fixed':
 
     prev_b = b
     prev_c = c
-    #prev_t = t
+  # prev_f = f
 
     for b, c in results['dims'][1:math.floor(results['low_start_idx']/2)]:
         b_str = utils.size_to_str(b)
@@ -261,17 +261,13 @@ if args.type == 'multi' or args.type == 'fixed':
 
         prev_b = b
         prev_c = c
-        
-        
-
-    print('came here bruhhhh')
     
-    t = results['time_dims'][1]
+    f = results['style_dims'][1]
     prev_model_dict = multi.best_model_dict
-    prev_model_dict['W'] = utils.finegrain_time_full(prev_model_dict['W'], t)
-    train_set.calculate_time(t)
-    val_set.calculate_time(t)
-    test_set.calculate_time(t)
+    prev_model_dict['W'] = utils.finegrain_time_full(prev_model_dict['W'], f)
+    train_set.calculate_style(f)
+    val_set.calculate_style(f)
+    test_set.calculate_style(f)
     
     # Full-rank first resolution
     b = results['dims'][max(math.floor(results['low_start_idx']/2) - 1, 0)][0]
@@ -282,7 +278,7 @@ if args.type == 'multi' or args.type == 'fixed':
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
     # T
-    t_str = str(t)
+    f_str = str(f)
     # T'
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
@@ -310,8 +306,6 @@ if args.type == 'multi' or args.type == 'fixed':
     multi.model.load_state_dict(multi.best_model_dict)
     test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
         test_set)
-    
-    print('also came here bruhh')
 
     # Metrics
     results['best_epochs'].append(multi.best_epochs)
@@ -339,7 +333,7 @@ if args.type == 'multi' or args.type == 'fixed':
 
     prev_b = b
     prev_c = c
-    #prev_t = t
+  # prev_f = f
 
     i = 0
     
@@ -347,18 +341,12 @@ if args.type == 'multi' or args.type == 'fixed':
         
         i = i + 1
         
-        print("omg boi")
-        
         b_str = utils.size_to_str(b)
         c_str = utils.size_to_str(c)
-
-        print('cry sadge')
         
         # Calculate_pos
         train_set.calculate_pos(b, c)
         val_set.calculate_pos(b, c)
-
-        print('idek at this point')
         
         # Finegrain
         prev_model_dict = multi.best_model_dict
@@ -372,8 +360,6 @@ if args.type == 'multi' or args.type == 'fixed':
                 4) or c[1] != prev_model_dict['W'].size(5):
             prev_model_dict['W'] = utils.finegrain(
                 prev_model_dict['W'], c, 4)
-
-        print('idek at this point aaaaf')
         
         # Train
         # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
@@ -384,8 +370,6 @@ if args.type == 'multi' or args.type == 'fixed':
         multi.init_params(**hyper)
         multi.init_loaders(train_set, val_set)
         multi.train_and_evaluate(save_dir)
-
-        print('idek at this point ghghghgthg')
         
         # Test
         # Create dataset
@@ -393,8 +377,6 @@ if args.type == 'multi' or args.type == 'fixed':
         multi.model.load_state_dict(multi.best_model_dict)
         test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
             test_set)
-        
-        print('this stuff aint working boi', i)
 
         # Metrics
         results['best_epochs'].append(multi.best_epochs)
@@ -424,10 +406,6 @@ if args.type == 'multi' or args.type == 'fixed':
 
         prev_b = b
         prev_c = c
-        
-        print('bro wtf?!')
-    
-    
 
     # Draw plots for full rank train
     fp_fig = os.path.join(fig_dir, "full_time_vs_loss.png")
@@ -444,10 +422,10 @@ if args.type == 'multi' or args.type == 'fixed':
     W = prev_model_dict['W'].view(W_size[0], W_size[1], W_size[2] * W_size[3],
                                          W_size[4] * W_size[5])
     weights, factors = cp_decompose(W, hyper['K'], max_iter=2000)
-    factors = [f * torch.pow(weights, 1 / len(factors)) for f in factors]
+    factors = [factor * torch.pow(weights, 1/len(factors)) for factor in factors]
     prev_model_dict.pop('W')
     prev_model_dict['A'] = factors[0].clone().detach()
-    prev_model_dict['T'] = factors[1].clone().detach()
+    prev_model_dict['F'] = factors[1].clone().detach()
     prev_model_dict['B'] = factors[2].clone().detach().view(
         *b, hyper['K'])
     prev_model_dict['C'] = factors[3].clone().detach().view(
@@ -475,8 +453,8 @@ b_str = utils.size_to_str(b)
 c_str = utils.size_to_str(c)
 train_set.calculate_pos(b, c)
 val_set.calculate_pos(b, c)
-train_set.calculate_time(t)
-val_set.calculate_time(t)
+train_set.calculate_style(f)
+val_set.calculate_style(f)
 
 # Train
 multi = BasketballMulti(device)
@@ -509,7 +487,7 @@ plot.latent_factor_heatmap(multi.best_model_dict['C'],
 # Test
 # Create dataset
 test_set.calculate_pos(b, c)
-test_set.calculate_time(t)
+test_set.calculate_style(f)
 multi.model.load_state_dict(multi.best_model_dict)
 test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
     test_set)
@@ -546,10 +524,6 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     # Calculate_pos
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
-
-    print('################')
-    print('b', b)
-    print('prev_model_dict["B"]', prev_model_dict['B'].size)
     
     # Finegrain
     prev_model_dict = multi.best_model_dict
@@ -561,9 +535,6 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
             0) or c[1] != prev_model_dict['C'].size(1):
         prev_model_dict['C'] = utils.finegrain(
             prev_model_dict['C'], c, 0)
-        
-    print('prev_model_dict["B"]', prev_model_dict['B'].size)
-    print('################')
 
     # Train
     # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))

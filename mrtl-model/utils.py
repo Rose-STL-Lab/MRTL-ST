@@ -219,7 +219,7 @@ def finegrain(T, new_shape, start_dim, mode='nearest'):
         print("new", new.shape)
     return new
 
-def finegrain_time_full(T, new_time_dim, mode='nearest'):
+def finegrain_time_full(T, new_style_dim, mode='nearest'):
     old_shape = T.shape # T.shape = [a, t, [b1, b2], [c1, c2]] 
 #     start_b = config.b_dims[0]
 #     start_c = config.c_dims[0]
@@ -230,13 +230,13 @@ def finegrain_time_full(T, new_time_dim, mode='nearest'):
                 old_shape[4] * old_shape[5],
                 old_shape[1])
     interp = torch.nn.functional.interpolate(old,
-                   size= (old_shape[4] * old_shape[5], new_time_dim),
+                   size= (old_shape[4] * old_shape[5], new_style_dim),
                    mode= mode)
     new = interp.view(
                 old_shape[0],
                 old_shape[2], old_shape[3],
                 old_shape[4], old_shape[5],
-                new_time_dim).permute(0, 5, 1, 2, 3, 4)
+                new_style_dim).permute(0, 5, 1, 2, 3, 4)
     return new
     
 #     old_c = T.clone().detach().view(

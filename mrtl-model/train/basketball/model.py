@@ -12,18 +12,18 @@ class DataParallelPassthrough(torch.nn.DataParallel):
 
 
 class Full(torch.nn.Module):
-    def __init__(self, a_dims, t_dims, b_dims, c_dims, counts):
+    def __init__(self, a_dims, f_dims, b_dims, c_dims, counts):
         super().__init__()
         self.a_dims = a_dims
-        self.t_dims = t_dims
+        self.f_dims = f_dims
         self.b_dims = b_dims
         self.c_dims = c_dims
-        self.W = torch.nn.Parameter(torch.randn((a_dims, t_dims, *b_dims, *c_dims)),
+        self.W = torch.nn.Parameter(torch.randn((a_dims, f_dims, *b_dims, *c_dims)),
                                     requires_grad=True)
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
         self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) #######
 
-    def forward(self, a, time, bh_pos, def_pos):
+    def forward(self, a, style, bh_pos, def_pos):
 #         print('time', time)
 #         a_long = a.long()
 #         print()
@@ -77,7 +77,7 @@ class Full(torch.nn.Module):
         
 
         
-        first = self.W[a.long(), time.long(), temp1,temp2, :, :]
+        first = self.W[a.long(), style.long(), temp1,temp2, :, :]
         
 #         print('first', first)
         
@@ -99,17 +99,17 @@ class Full(torch.nn.Module):
         return out.add_(self.b[a.long()]) #######
 
 class Low(torch.nn.Module):
-    def __init__(self, a_dims, t_dims, b_dims, c_dims, K, counts):
+    def __init__(self, a_dims, f_dims, b_dims, c_dims, K, counts):
         super().__init__()
         self.a_dims = a_dims
-        self.t_dims = t_dims
+        self.f_dims = f_dims
         self.b_dims = b_dims
         self.c_dims = c_dims
         self.K = K
 
         self.A = torch.nn.Parameter(torch.randn((a_dims, K)),
                                     requires_grad=True)
-        self.T = torch.nn.Parameter(torch.randn((t_dims, K)),
+        self.F = torch.nn.Parameter(torch.randn((f_dims, K)),
                                     requires_grad=True)
         self.B = torch.nn.Parameter(torch.randn(*b_dims, K),
                                     requires_grad=True)
@@ -119,7 +119,7 @@ class Low(torch.nn.Module):
         # self.b = torch.nn.Parameter(torch.ones(a_dims) * np.log(counts[1] / (counts[0])), requires_grad=True)
         self.b = torch.nn.Parameter(torch.zeros(a_dims), requires_grad=True) #########
 
-    def forward(self, a, time, bh_pos, def_pos):
+    def forward(self, a, style, bh_pos, def_pos):
 #         print("Dims")
 #         print(self.A[a.long(), :].size())
 #         print(bh_pos[:, 0].long())
