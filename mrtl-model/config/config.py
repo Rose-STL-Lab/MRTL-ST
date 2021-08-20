@@ -1,6 +1,6 @@
 b_dims = [[4, 5], [8, 10], [20, 25], [40, 50]]
 c_dims = [[6, 6], [12, 12]]
-f_dims = [1, 6]
+f_dims = [1, 7]
 
 train_percent = 0.6
 val_percent = 0.2

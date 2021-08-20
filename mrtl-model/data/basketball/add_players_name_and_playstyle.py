@@ -83,7 +83,7 @@ for id in player_ids:
         continue
 
     # get style for the current player
-    style = playstyles[0][2]
+    style = int(playstyles[0][2])
     style_name = playstyles[0][1]
     
     # For every dataframe row with the current player, assign the bh_playstyle
@@ -103,4 +103,6 @@ _, counts = np.unique(df['shoot_label'], return_counts=True)
 print(f'New label percentages: {counts / df.shape[0]}')
 
 # Replace the read_pickle argument with the path where you want to store the dataframe with player names
-df.to_pickle('full_data_with_names')
+df.to_pickle('full_data_with_names.pkl')
+
+print(df['bh_playstyle'])

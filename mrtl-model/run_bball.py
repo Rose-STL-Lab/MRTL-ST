@@ -99,17 +99,17 @@ if args.type == 'multi':
                        
                        [[8, 10], [12, 12]], [[20, 25], [12, 12]],
                        [[40, 50], [12, 12]]]  # Low rank
-    results['style_dims'] = [1, 6]
+    results['style_dims'] = [1, 7]
     results['low_start_idx'] = 3
     results['low_start_time_idx'] = 2
 elif args.type == 'fixed':
     results['dims'] = [[[40, 50], [12, 12]], [[40, 50], [12, 12]]]
-    results['style_dims'] = [6, 6]
+    results['style_dims'] = [7, 7]
     results['low_start_idx'] = 1
     results['low_start_time_idx'] = 1
 elif args.type == 'rand':
     results['dims'] = [[[40, 50], [12, 12]]]
-    results['style_dims'] = [6]
+    results['style_dims'] = [7]
     results['low_start_idx'] = 0
     results['low_start_time_idx'] = 0
 

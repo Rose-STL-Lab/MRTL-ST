@@ -77,7 +77,7 @@ class Full(torch.nn.Module):
         
 
         
-        first = self.W[a.long(), style.long(), temp1,temp2, :, :]
+        first = self.W[a.long(), style.long(), temp1, temp2, :, :]
         
 #         print('first', first)
         
