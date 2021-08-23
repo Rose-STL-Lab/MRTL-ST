@@ -232,7 +232,7 @@ class BasketballMulti:
                     os.path.join(
                         save_dir, "model_{0}_{1},{2}_epoch{3}.pt".format(
                             type(self.model).__name__.lower(),
-                            str(self.time_dim),
+                            str(self.style_dim),
                             utils.size_to_str(self.dims[0]),
                             utils.size_to_str(self.dims[1]), epochs)))
 
@@ -254,7 +254,7 @@ class BasketballMulti:
                         os.path.join(
                             save_dir, "model_{0}_{1},{2}_best.pt".format(
                                 type(self.model).__name__.lower(),
-                                str(self.time_dim),
+                                str(self.style_dim),
                                 utils.size_to_str(self.dims[0]),
                                 utils.size_to_str(self.dims[1]))))
 

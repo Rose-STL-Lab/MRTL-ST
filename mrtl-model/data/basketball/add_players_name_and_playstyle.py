@@ -96,13 +96,15 @@ for id in player_ids:
 
 # Remove the rows with no bh_name i.e. not found in shot_logs
 df = df[df['bh_name'] != 'undefined']
+df = df[df['playstyle_name'] != 'undefined']
+
+# Reassign player IDs
+df['a'], uniques = pd.factorize(df['bh_name'])
 
 # Logging purposes
 print(f'New Shape: {df.shape}')
 _, counts = np.unique(df['shoot_label'], return_counts=True)
 print(f'New label percentages: {counts / df.shape[0]}')
 
-# Replace the read_pickle argument with the path where you want to store the dataframe with player names
+# Save the new dataset to a pickle file
 df.to_pickle('full_data_with_names.pkl')
-
-print(df['bh_playstyle'])
