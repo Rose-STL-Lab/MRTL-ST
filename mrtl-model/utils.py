@@ -128,10 +128,13 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
     reg_2 = torch.tensor(0.).to(device)
     reg_3 = torch.tensor(0.).to(device)
     reg_4 = torch.tensor(0.).to(device)
+    reg_5 = torch.tensor(0.).to(device)
+    reg_6 = torch.tensor(0.).to(device)
+    reg_7 = torch.tensor(0.).to(device)
 
     if type(model).__name__.startswith('Full'):        
-        # Split W into quarters
-        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
+        # Split W into playstyles
+        W_1, W_2, W_3, W_4, W_5, W_6, W_7 = torch.chunk(model.W, 7, 1)
 
         # Court dimension
         W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1] * W_1.size()[2],
@@ -158,8 +161,26 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_4.add_((K_B * pdist(W_4_unfold)).sum() /
                  (torch.numel(W_4) * np.prod(model.b_dims)))
         
-        # Split W into quarters
-        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 3)
+        W_5_unfold = unfold(W_5.view(W_5.size()[0], W_5.size()[1] * W_5.size()[2],
+                                       W_5.size()[3], W_5.size()[4]),
+                          mode=1).contiguous()
+        reg_5.add_((K_B * pdist(W_5_unfold)).sum() /
+                 (torch.numel(W_5) * np.prod(model.b_dims)))
+        
+        W_6_unfold = unfold(W_6.view(W_6.size()[0], W_6.size()[1] * W_6.size()[2],
+                                       W_6.size()[3], W_6.size()[4]),
+                          mode=1).contiguous()
+        reg_6.add_((K_B * pdist(W_6_unfold)).sum() /
+                 (torch.numel(W_6) * np.prod(model.b_dims)))
+        
+        W_7_unfold = unfold(W_7.view(W_7.size()[0], W_7.size()[1] * W_7.size()[2],
+                                       W_7.size()[3], W_7.size()[4]),
+                          mode=1).contiguous()
+        reg_7.add_((K_B * pdist(W_7_unfold)).sum() /
+                 (torch.numel(W_7) * np.prod(model.b_dims)))
+        
+        # Split W into playstyles
+        W_1, W_2, W_3, W_4, W_5, W_6, W_7 = torch.chunk(model.W, 7, 3)
 
         # Defender position
         W_1_unfold = unfold(W_1.view(W_1.size()[0], W_1.size()[1], W_1.size()[2],
@@ -186,12 +207,30 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_4.add_((K_C * pdist(W_4_unfold)).sum() /
                  (torch.numel(W_4) * np.prod(model.c_dims)))
         
-        # Recombine the regularized quarter values
-        reg = (reg_1 + reg_2 + reg_3 + reg_4)/4.0
+        W_5_unfold = unfold(W_5.view(W_5.size()[0], W_5.size()[1], W_5.size()[2],
+                                       W_5.size()[3] * W_5.size()[4]),
+                          mode=3).contiguous()
+        reg_5.add_((K_C * pdist(W_5_unfold)).sum() /
+                 (torch.numel(W_5) * np.prod(model.c_dims)))
+        
+        W_6_unfold = unfold(W_6.view(W_6.size()[0], W_6.size()[1], W_6.size()[2],
+                                       W_6.size()[3] * W_6.size()[4]),
+                          mode=3).contiguous()
+        reg_6.add_((K_C * pdist(W_6_unfold)).sum() /
+                 (torch.numel(W_6) * np.prod(model.c_dims)))
+        
+        W_7_unfold = unfold(W_7.view(W_7.size()[0], W_7.size()[1], W_7.size()[2],
+                                       W_7.size()[3] * W_7.size()[4]),
+                          mode=3).contiguous()
+        reg_7.add_((K_C * pdist(W_7_unfold)).sum() /
+                 (torch.numel(W_7) * np.prod(model.c_dims)))
+        
+        # Recombine the regularized playstyle values
+        reg = (reg_1 + reg_2 + reg_3 + reg_4 + reg_5 + reg_6 + reg_7)/7.0
     else:
-        # Split B and C into quarters
-        B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
-        C_1, C_2, C_3, C_4 = torch.chunk(model.C, 4, 0)
+        # Split B and C into playstyles
+        B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(model.B, 7, 0)
+        C_1, C_2, C_3, C_4, C_5, C_6, C_7 = torch.chunk(model.C, 7, 0)
 
         # Court dimension
         reg_1.add_((K_B * pdist(B_1.view(-1, model.K))).sum() /
@@ -225,73 +264,34 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
         reg_4.add_((K_C * pdist(C_4.view(-1, model.K))).sum() /
                  (torch.numel(C_4) * np.prod(model.c_dims)))
         
-        # Recombine the regularized quarters
-        reg = (reg_1 + reg_2 + reg_3 + reg_4)/4.0
+        # Court dimension
+        reg_5.add_((K_B * pdist(B_5.view(-1, model.K))).sum() /
+                 (torch.numel(B_5) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_5.add_((K_C * pdist(C_5.view(-1, model.K))).sum() /
+                 (torch.numel(C_5) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        reg_6.add_((K_B * pdist(B_6.view(-1, model.K))).sum() /
+                 (torch.numel(B_6) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_6.add_((K_C * pdist(C_6.view(-1, model.K))).sum() /
+                 (torch.numel(C_6) * np.prod(model.c_dims)))
+        
+        # Court dimension
+        reg_7.add_((K_B * pdist(B_7.view(-1, model.K))).sum() /
+                 (torch.numel(B_7) * np.prod(model.b_dims)))
+
+        # Defender position
+        reg_7.add_((K_C * pdist(C_7.view(-1, model.K))).sum() /
+                 (torch.numel(C_7) * np.prod(model.c_dims)))
+        
+        # Recombine the regularized playstyles
+        reg = (reg_1 + reg_2 + reg_3 + reg_4 + reg_5 + reg_6 + reg_7)/7.0
 
     return reg
-
-def bball_temporal_regularizer(model, device):
-    #breakpoint()
-    reg = torch.tensor(0.).to(device)
-
-    if type(model).__name__.startswith('Full'):        
-        # Split W into quarters
-        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 1)
-
-        # W_2 - W_1
-        reg.add_(torch.pow((W_2 - W_1), 2).sum())
-        
-        # W_3 - W_2
-        reg.add_(torch.pow((W_3 - W_2), 2).sum())
-        
-        # W_4 - W_3
-        reg.add_(torch.pow((W_4 - W_3), 2).sum())
-        
-        # Split W into quarters
-        W_1, W_2, W_3, W_4 = torch.chunk(model.W, 4, 3)
-
-        # W_2 - W_1
-        reg.add_(torch.pow((W_2 - W_1), 2).sum())
-        
-        # W_3 - W_2
-        reg.add_(torch.pow((W_3 - W_2), 2).sum())
-        
-        # W_4 - W_3
-        reg.add_(torch.pow((W_4 - W_3), 2).sum())
-        
-        # Additional term
-        reg.add_((pow(torch.norm(W_1), 2) + pow(torch.norm(W_2), 2) +
-            pow(torch.norm(W_3), 2) + pow(torch.norm(W_4), 2)) * pow(10, -10))
-    else:
-        # Split B and C into quarters
-        B_1, B_2, B_3, B_4 = torch.chunk(model.B, 4, 0)
-        C_1, C_2, C_3, C_4 = torch.chunk(model.C, 4, 0)
-
-        # B_2 - B_1
-        reg.add_(torch.pow((B_2 - B_1), 2).sum())
-        
-        # B_3 - B_2
-        reg.add_(torch.pow((B_3 - B_2), 2).sum())
-        
-        # B_4 - B_3
-        reg.add_(torch.pow((B_4 - B_3), 2).sum())
-        
-        # C_2 - C_1
-        reg.add_(torch.pow((C_2 - C_1), 2).sum())
-        
-        # C_3 - C_2
-        reg.add_(torch.pow((C_3 - C_2), 2).sum())
-        
-        # C_4 - C_3
-        reg.add_(torch.pow((C_4 - C_3), 2).sum())
-        
-        # Additional term
-        reg.add_((pow(torch.norm(B_1), 2) + pow(torch.norm(B_2), 2) +
-            pow(torch.norm(B_3), 2) + pow(torch.norm(B_4), 2) +
-            pow(torch.norm(C_1), 2) + pow(torch.norm(C_2), 2) +
-            pow(torch.norm(C_3), 2) + pow(torch.norm(C_4), 2)) * pow(10, -10))
-
-    return reg/2.0
 
 def class_counts(dataset):
     _, counts = np.unique(dataset.y, return_counts=True)

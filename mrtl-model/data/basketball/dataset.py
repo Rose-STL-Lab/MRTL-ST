@@ -42,7 +42,7 @@ class BballRawDataset(torch.utils.data.Dataset):
 
         # Scale bh_pos
         bh_x = (self.data.loc[:, 'bh_x'] / scale_bh + self.b_dims[0] *
-                self.data.loc[:, 'quarter']).astype(np.uint8).to_numpy()
+                self.data.loc[:, 'playstyle']).astype(np.uint8).to_numpy()
         bh_y = (self.data.loc[:, 'bh_y'] / scale_bh).astype(
             np.uint8).to_numpy()
         self.bh_pos = np.column_stack((bh_x, bh_y))
@@ -54,9 +54,9 @@ class BballRawDataset(torch.utils.data.Dataset):
         quarter_offset = self.c_dims[0] * self.data.loc[:, 'quarter'].astype(
             np.int16).to_numpy()
         def_pos_x = ((def_pos_x + 6) / scale_def)
-        def_pos_x = def_pos_x.fillna(4 * c_dims[0]).astype(np.int16).to_numpy()
+        def_pos_x = def_pos_x.fillna(7 * c_dims[0]).astype(np.int16).to_numpy()
         def_pos_x = (def_pos_x.transpose() + quarter_offset).transpose()
-        def_pos_x = np.clip(def_pos_x, a_min=0, a_max=(4 * c_dims[0]))
+        def_pos_x = np.clip(def_pos_x, a_min=0, a_max=(7 * c_dims[0]))
 
         def_pos_y = self.data.filter(like='trunc_y')[self.data.filter(
             like='trunc_y') != invalid_def_pos_val]
@@ -66,13 +66,13 @@ class BballRawDataset(torch.utils.data.Dataset):
         # Convert 2D to 1D
         def_pos = def_pos_x * (self.c_dims[0] + 1) + def_pos_y
         mask = torch.zeros(self.data.shape[0],
-                           (self.c_dims[0] * 4 + 1) * (self.c_dims[1] + 1),
+                           (self.c_dims[0] * 7 + 1) * (self.c_dims[1] + 1),
                            dtype=int)
         mask.scatter_add_(1,
                           torch.from_numpy(def_pos).long(),
                           torch.ones_like(mask))
-        mask = mask.view(-1, self.c_dims[0] * 4 + 1, self.c_dims[1] +
-                         1)[:, :self.c_dims[0] * 4, :self.c_dims[1]]
+        mask = mask.view(-1, self.c_dims[0] * 7 + 1, self.c_dims[1] +
+                         1)[:, :self.c_dims[0] * 7, :self.c_dims[1]]
 
         self.def_pos = mask.numpy().astype(np.uint8)
 

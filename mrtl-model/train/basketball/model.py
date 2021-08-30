@@ -16,8 +16,8 @@ class Full(torch.nn.Module):
         super().__init__()
 
         # Multiply b_dims[0] and c_dims[0] by 4 to account for 4 quarters
-        b_dims[0] = b_dims[0] * 4
-        c_dims[0] = c_dims[0] * 4
+        b_dims[0] = b_dims[0] * 7
+        c_dims[0] = c_dims[0] * 7
         self.a_dims = a_dims
         self.b_dims = b_dims
         self.c_dims = c_dims
@@ -77,8 +77,8 @@ class Low(torch.nn.Module):
         super().__init__()
         
         # Multiply b_dims[0] and c_dims[0] by 4 to account for 4 quarters
-        b_dims[0] = 4 * b_dims[0]
-        c_dims[0] = 4 * c_dims[0]
+        b_dims[0] = 7 * b_dims[0]
+        c_dims[0] = 7 * c_dims[0]
         self.a_dims = a_dims
         self.b_dims = b_dims
         self.c_dims = c_dims

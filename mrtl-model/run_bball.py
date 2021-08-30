@@ -34,7 +34,6 @@ parser.add_argument('--full-lr', dest='full_lr', type=float)
 parser.add_argument('--full-reg', dest='full_reg', type=float)
 parser.add_argument('--low-lr', dest='low_lr', type=float)
 parser.add_argument('--low-reg', dest='low_reg', type=float)
-parser.add_argument('--delta', dest='delta', type=float)
 args = parser.parse_args()
 
 # Parameters
@@ -131,8 +130,8 @@ if args.type == 'multi' or args.type == 'fixed':
     multi.train_and_evaluate(save_dir)
     
     # Bug fix
-    b = [b[0]//4, b[1]]
-    c = [c[0]//4, c[1]]
+    b = [b[0]//7, b[1]]
+    c = [c[0]//7, c[1]]
 
     # Test
     # Create dataset
@@ -180,28 +179,34 @@ if args.type == 'multi' or args.type == 'fixed':
         prev_model_dict = multi.best_model_dict
         print(prev_model_dict)
 
-        if (4 * b[0]) != prev_model_dict['W'].size(
+        if (7 * b[0]) != prev_model_dict['W'].size(
                 1) or b[1] != prev_model_dict['W'].size(2):
-            # Separate the tensor into quarters
-            W_1, W_2, W_3, W_4 = torch.chunk(prev_model_dict['W'], 4, 1)
-            # Finegrain each quarter separately
+            # Separate the tensor into playstyles
+            W_1, W_2, W_3, W_4, W_5, W_6, W_7 = torch.chunk(prev_model_dict['W'], 7, 1)
+            # Finegrain each playstyle separately
             W_1 = utils.finegrain(W_1, b, 1)
             W_2 = utils.finegrain(W_2, b, 1)
             W_3 = utils.finegrain(W_3, b, 1)
             W_4 = utils.finegrain(W_4, b, 1)
-            # Recombine the quarter chunks into one tensor
-            prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 1)
-        if (4 * c[0]) != prev_model_dict['W'].size(
+            W_5 = utils.finegrain(W_5, b, 1)
+            W_6 = utils.finegrain(W_6, b, 1)
+            W_7 = utils.finegrain(W_7, b, 1)
+            # Recombine the playstyle chunks into one tensor
+            prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4, W_5, W_6, W_7), 1)
+        if (7 * c[0]) != prev_model_dict['W'].size(
                 3) or c[1] != prev_model_dict['W'].size(4):
-            # Separate the tensor into quarters
-            W_1, W_2, W_3, W_4 = torch.chunk(prev_model_dict['W'], 4, 3)
-            # Finegrain each quarter separately
+            # Separate the tensor into playstyles
+            W_1, W_2, W_3, W_4, W_5, W_6, W_7 = torch.chunk(prev_model_dict['W'], 7, 3)
+            # Finegrain each playstyle separately
             W_1 = utils.finegrain(W_1, c, 3)
             W_2 = utils.finegrain(W_2, c, 3)
             W_3 = utils.finegrain(W_3, c, 3)
             W_4 = utils.finegrain(W_4, c, 3)
-            # Recombine the quarter chunks into one tensor
-            prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4), 3)
+            W_5 = utils.finegrain(W_5, c, 3)
+            W_6 = utils.finegrain(W_6, c, 3)
+            W_7 = utils.finegrain(W_7, c, 3)
+            # Recombine the playstyle chunks into one tensor
+            prev_model_dict['W'] = torch.cat((W_1, W_2, W_3, W_4, W_5, W_6, W_7), 3)
 
         # Train
         # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
@@ -214,8 +219,8 @@ if args.type == 'multi' or args.type == 'fixed':
         multi.train_and_evaluate(save_dir)
         
         # Bug fix
-        b = [b[0]//4, b[1]]
-        c = [c[0]//4, c[1]]
+        b = [b[0]//7, b[1]]
+        c = [c[0]//7, c[1]]
 
         # Test
         # Create dataset
@@ -271,8 +276,8 @@ if args.type == 'multi' or args.type == 'fixed':
     factors = [f * torch.pow(weights, 1 / len(factors)) for f in factors]
     
     # Bug fix
-    b = [b[0] * 4, b[1]]
-    c = [c[0] * 4, c[1]]
+    b = [b[0] * 7, b[1]]
+    c = [c[0] * 7, c[1]]
     
     prev_model_dict.pop('W')
     prev_model_dict['A'] = factors[0].clone().detach()
@@ -282,123 +287,8 @@ if args.type == 'multi' or args.type == 'fixed':
         *c, hyper['K'])
 
     # Draw heatmaps after CP decomposition
-    B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
-    C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
-    
-    # Reorder latent factors for visualization
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
-            first = torch.tensor(B_1[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(B_2[..., i].cpu().numpy().copy())
-            for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
-                second = torch.tensor(B_1[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(B_2[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    B_2[..., i].copy_(candidate)
-                    B_2[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
-            first = torch.tensor(B_2[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(B_3[..., i].cpu().numpy().copy())
-            for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
-                second = torch.tensor(B_2[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(B_3[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    B_3[..., i].copy_(candidate)
-                    B_3[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
-            first = torch.tensor(B_3[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(B_4[..., i].cpu().numpy().copy())
-            for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
-                second = torch.tensor(B_3[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(B_4[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    B_4[..., i].copy_(candidate)
-                    B_4[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
-            first = torch.tensor(C_1[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(C_2[..., i].cpu().numpy().copy())
-            for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
-                second = torch.tensor(C_1[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(C_2[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    C_2[..., i].copy_(candidate)
-                    C_2[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
-            first = torch.tensor(C_2[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(C_3[..., i].cpu().numpy().copy())
-            for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
-                second = torch.tensor(C_2[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(C_3[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    C_3[..., i].copy_(candidate)
-                    C_3[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
-            first = torch.tensor(C_3[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(C_4[..., i].cpu().numpy().copy())
-            for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
-                second = torch.tensor(C_3[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(C_4[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    C_4[..., i].copy_(candidate)
-                    C_4[..., j].copy_(baseline)
-                    baseline = candidate
+    B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(prev_model_dict['B'], 7, 0)
+    C_1, C_2, C_3, C_4, C_5, C_6, C_7 = torch.chunk(prev_model_dict['C'], 7, 0)
     
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
@@ -417,6 +307,18 @@ if args.type == 'multi' or args.type == 'fixed':
     plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_5.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_5, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_6.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_6, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_7.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_7, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
@@ -431,6 +333,18 @@ if args.type == 'multi' or args.type == 'fixed':
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_5.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_5, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_6.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_6, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -456,123 +370,8 @@ multi.train_and_evaluate(save_dir)
 
 # Draw heatmaps
 print(multi.best_model_dict)
-B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
-C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
-
-# Reorder latent factors for visualization
-change = True
- 
-while(change):
-    change = False
-    for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
-        first = torch.tensor(B_1[..., i].cpu().numpy().copy())
-        baseline = torch.tensor(B_2[..., i].cpu().numpy().copy())
-        for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
-            second = torch.tensor(B_1[..., j].cpu().numpy().copy())
-            candidate = torch.tensor(B_2[..., j].cpu().numpy().copy())
-            difference = np.linalg.norm((first - candidate).cpu())
-            base_difference = np.linalg.norm((first - baseline).cpu())
-            max_difference = np.linalg.norm((second - candidate).cpu())
-            if difference < max_difference and difference < base_difference:
-                change = True
-                B_2[..., i].copy_(candidate)
-                B_2[..., j].copy_(baseline)
-                baseline = candidate
-                    
-change = True
-    
-while(change):
-    change = False
-    for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
-        first = torch.tensor(B_2[..., i].cpu().numpy().copy())
-        baseline = torch.tensor(B_3[..., i].cpu().numpy().copy())
-        for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
-            second = torch.tensor(B_2[..., j].cpu().numpy().copy())
-            candidate = torch.tensor(B_3[..., j].cpu().numpy().copy())
-            difference = np.linalg.norm((first - candidate).cpu())
-            base_difference = np.linalg.norm((first - baseline).cpu())
-            max_difference = np.linalg.norm((second - candidate).cpu())
-            if difference < max_difference and difference < base_difference:
-                change = True
-                B_3[..., i].copy_(candidate)
-                B_3[..., j].copy_(baseline)
-                baseline = candidate
-                    
-change = True
-    
-while(change):
-    change = False
-    for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
-        first = torch.tensor(B_3[..., i].cpu().numpy().copy())
-        baseline = torch.tensor(B_4[..., i].cpu().numpy().copy())
-        for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
-            second = torch.tensor(B_3[..., j].cpu().numpy().copy())
-            candidate = torch.tensor(B_4[..., j].cpu().numpy().copy())
-            difference = np.linalg.norm((first - candidate).cpu())
-            base_difference = np.linalg.norm((first - baseline).cpu())
-            max_difference = np.linalg.norm((second - candidate).cpu())
-            if difference < max_difference and difference < base_difference:
-                change = True
-                B_4[..., i].copy_(candidate)
-                B_4[..., j].copy_(baseline)
-                baseline = candidate
-                    
-change = True
-    
-while(change):
-    change = False
-    for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
-        first = torch.tensor(C_1[..., i].cpu().numpy().copy())
-        baseline = torch.tensor(C_2[..., i].cpu().numpy().copy())
-        for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
-            second = torch.tensor(C_1[..., j].cpu().numpy().copy())
-            candidate = torch.tensor(C_2[..., j].cpu().numpy().copy())
-            difference = np.linalg.norm((first - candidate).cpu())
-            base_difference = np.linalg.norm((first - baseline).cpu())
-            max_difference = np.linalg.norm((second - candidate).cpu())
-            if difference < max_difference and difference < base_difference:
-                change = True
-                C_2[..., i].copy_(candidate)
-                C_2[..., j].copy_(baseline)
-                baseline = candidate
-                    
-change = True
-    
-while(change):
-    change = False
-    for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
-        first = torch.tensor(C_2[..., i].cpu().numpy().copy())
-        baseline = torch.tensor(C_3[..., i].cpu().numpy().copy())
-        for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
-            second = torch.tensor(C_2[..., j].cpu().numpy().copy())
-            candidate = torch.tensor(C_3[..., j].cpu().numpy().copy())
-            difference = np.linalg.norm((first - candidate).cpu())
-            base_difference = np.linalg.norm((first - baseline).cpu())
-            max_difference = np.linalg.norm((second - candidate).cpu())
-            if difference < max_difference and difference < base_difference:
-                change = True
-                C_3[..., i].copy_(candidate)
-                C_3[..., j].copy_(baseline)
-                baseline = candidate
-                    
-change = True
-    
-while(change):
-    change = False
-    for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
-        first = torch.tensor(C_3[..., i].cpu().numpy().copy())
-        baseline = torch.tensor(C_4[..., i].cpu().numpy().copy())
-        for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
-            second = torch.tensor(C_3[..., j].cpu().numpy().copy())
-            candidate = torch.tensor(C_4[..., j].cpu().numpy().copy())
-            difference = np.linalg.norm((first - candidate).cpu())
-            base_difference = np.linalg.norm((first - baseline).cpu())
-            max_difference = np.linalg.norm((second - candidate).cpu())
-            if difference < max_difference and difference < base_difference:
-                change = True
-                C_4[..., i].copy_(candidate)
-                C_4[..., j].copy_(baseline)
-                baseline = candidate
+B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(prev_model_dict['B'], 7, 0)
+C_1, C_2, C_3, C_4, C_5, C_6, C_7 = torch.chunk(prev_model_dict['C'], 7, 0)
 
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
@@ -591,6 +390,18 @@ fp_fig = os.path.join(fig_dir,
 plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_5.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_5, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_6.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_6, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_7.png".format(b_str, c_str))
+plot.latent_factor_heatmap(B_7, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
 plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
@@ -606,10 +417,22 @@ fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
 plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_5.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_5, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_6.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_6, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
+plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
 
 # Bug fix
-b = [b[0]//4, b[1]]
-c = [c[0]//4, c[1]]
+b = [b[0]//7, b[1]]
+c = [c[0]//7, c[1]]
 
 # Test
 # Create dataset
@@ -653,28 +476,34 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
 
     # Finegrain
     prev_model_dict = multi.best_model_dict
-    if (4 * b[0]) != prev_model_dict['B'].size(
+    if (7 * b[0]) != prev_model_dict['B'].size(
             0) or b[1] != prev_model_dict['B'].size(1):
-        # Separate B into quarters
-        B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
-        # Finegrain each quarter separately
+        # Separate B into playstyles
+        B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(prev_model_dict['B'], 7, 0)
+        # Finegrain each playstyle separately
         B_1 = utils.finegrain(B_1, b, 0)
         B_2 = utils.finegrain(B_2, b, 0)
         B_3 = utils.finegrain(B_3, b, 0)
         B_4 = utils.finegrain(B_4, b, 0)
-        # Recombine the quarter chunks into one tensor
-        prev_model_dict['B'] = torch.cat((B_1, B_2, B_3, B_4), 0)
-    if (4 * c[0]) != prev_model_dict['C'].size(
+        B_5 = utils.finegrain(B_5, b, 0)
+        B_6 = utils.finegrain(B_6, b, 0)
+        B_7 = utils.finegrain(B_7, b, 0)
+        # Recombine the playstyle chunks into one tensor
+        prev_model_dict['B'] = torch.cat((B_1, B_2, B_3, B_4, B_5, B_6, B_7), 0)
+    if (7 * c[0]) != prev_model_dict['C'].size(
             0) or c[1] != prev_model_dict['C'].size(1):
         # Separate C into quarters
-        C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
+        C_1, C_2, C_3, C_4, C_5, C_6, C_7 = torch.chunk(prev_model_dict['C'], 7, 0)
         # Finegrain each quarter separately
         C_1 = utils.finegrain(C_1, c, 0)
         C_2 = utils.finegrain(C_2, c, 0)
         C_3 = utils.finegrain(C_3, c, 0)
         C_4 = utils.finegrain(C_4, c, 0)
+        C_5 = utils.finegrain(C_5, c, 0)
+        C_6 = utils.finegrain(C_6, c, 0)
+        C_7 = utils.finegrain(C_7, c, 0)
         # Recombine the quarter chunks into one tensor
-        prev_model_dict['C'] = torch.cat((C_1, C_2, C_3, C_4), 0)
+        prev_model_dict['C'] = torch.cat((C_1, C_2, C_3, C_4, C_5, C_6, C_7), 0)
 
     # Train
     # hyper['lr'] = multi.best_lr / ((b[0] / prev_b[0]) * (c[0] / prev_c[0]))
@@ -687,123 +516,8 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     multi.train_and_evaluate(save_dir)
 
     # Draw heatmaps
-    B_1, B_2, B_3, B_4 = torch.chunk(prev_model_dict['B'], 4, 0)
-    C_1, C_2, C_3, C_4 = torch.chunk(prev_model_dict['C'], 4, 0)
-    
-    # Reorder latent factors for visualization
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(B_1.shape[len(list(B_1.shape)) - 1]):
-            first = torch.tensor(B_1[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(B_2[..., i].cpu().numpy().copy())
-            for j in range(B_2.shape[len(list(B_2.shape)) - 1]):
-                second = torch.tensor(B_1[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(B_2[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    B_2[..., i].copy_(candidate)
-                    B_2[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(B_2.shape[len(list(B_2.shape)) - 1]):
-            first = torch.tensor(B_2[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(B_3[..., i].cpu().numpy().copy())
-            for j in range(B_3.shape[len(list(B_3.shape)) - 1]):
-                second = torch.tensor(B_2[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(B_3[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    B_3[..., i].copy_(candidate)
-                    B_3[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(B_3.shape[len(list(B_3.shape)) - 1]):
-            first = torch.tensor(B_3[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(B_4[..., i].cpu().numpy().copy())
-            for j in range(B_4.shape[len(list(B_4.shape)) - 1]):
-                second = torch.tensor(B_3[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(B_4[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    B_4[..., i].copy_(candidate)
-                    B_4[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(C_1.shape[len(list(C_1.shape)) - 1]):
-            first = torch.tensor(C_1[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(C_2[..., i].cpu().numpy().copy())
-            for j in range(C_2.shape[len(list(C_2.shape)) - 1]):
-                second = torch.tensor(C_1[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(C_2[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    C_2[..., i].copy_(candidate)
-                    C_2[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(C_2.shape[len(list(C_2.shape)) - 1]):
-            first = torch.tensor(C_2[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(C_3[..., i].cpu().numpy().copy())
-            for j in range(C_3.shape[len(list(C_3.shape)) - 1]):
-                second = torch.tensor(C_2[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(C_3[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    C_3[..., i].copy_(candidate)
-                    C_3[..., j].copy_(baseline)
-                    baseline = candidate
-                    
-    change = True
-    
-    while(change):
-        change = False
-        for i in range(C_3.shape[len(list(C_3.shape)) - 1]):
-            first = torch.tensor(C_3[..., i].cpu().numpy().copy())
-            baseline = torch.tensor(C_4[..., i].cpu().numpy().copy())
-            for j in range(C_4.shape[len(list(C_4.shape)) - 1]):
-                second = torch.tensor(C_3[..., j].cpu().numpy().copy())
-                candidate = torch.tensor(C_4[..., j].cpu().numpy().copy())
-                difference = np.linalg.norm((first - candidate).cpu())
-                base_difference = np.linalg.norm((first - baseline).cpu())
-                max_difference = np.linalg.norm((second - candidate).cpu())
-                if difference < max_difference and difference < base_difference:
-                    change = True
-                    C_4[..., i].copy_(candidate)
-                    C_4[..., j].copy_(baseline)
-                    baseline = candidate
+    B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(prev_model_dict['B'], 7, 0)
+    C_1, C_2, C_3, C_4, C_5, C_6, C_7 = torch.chunk(prev_model_dict['C'], 7, 0)
     
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_1.png".format(b_str, c_str))
@@ -822,6 +536,18 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     plot.latent_factor_heatmap(B_4, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_5.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_5, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_6.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_6, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_7.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(B_7, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
@@ -837,10 +563,22 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
                           "low_{0},{1}_C_heatmap_4.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_4, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_5.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_5, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_6.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_6, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
     
     # Bug fix
-    b = [b[0]//4, b[1]]
-    c = [c[0]//4, c[1]]
+    b = [b[0]//7, b[1]]
+    c = [c[0]//7, c[1]]
 
     # Test
     # Create dataset
