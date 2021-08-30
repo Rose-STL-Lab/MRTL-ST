@@ -131,9 +131,9 @@ class BasketballMulti:
 
         if 'sigma' in self.params:
             # Precompute kernel matrices
-            self.K_B = utils.create_kernel([self.dims[0][0]//4, self.dims[0][1]],
+            self.K_B = utils.create_kernel([self.dims[0][0]//7, self.dims[0][1]],
                                            self.params['sigma'], self.device)
-            self.K_C = utils.create_kernel([self.dims[1][0]//4, self.dims[1][1]], self.params['sigma'],
+            self.K_C = utils.create_kernel([self.dims[1][0]//7, self.dims[1][1]], self.params['sigma'],
                                            self.device)
 
     def init_loaders(self, train_set, val_set):
