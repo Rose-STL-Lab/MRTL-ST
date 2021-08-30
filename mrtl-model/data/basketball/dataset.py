@@ -42,7 +42,7 @@ class BballRawDataset(torch.utils.data.Dataset):
 
         # Scale bh_pos
         bh_x = (self.data.loc[:, 'bh_x'] / scale_bh + self.b_dims[0] *
-                self.data.loc[:, 'playstyle']).astype(np.uint8).to_numpy()
+                self.data.loc[:, 'bh_playstyle']).astype(np.uint8).to_numpy()
         bh_y = (self.data.loc[:, 'bh_y'] / scale_bh).astype(
             np.uint8).to_numpy()
         self.bh_pos = np.column_stack((bh_x, bh_y))
