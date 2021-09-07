@@ -285,6 +285,9 @@ if args.type == 'multi' or args.type == 'fixed':
         *b, hyper['K'])
     prev_model_dict['C'] = factors[2].clone().detach().view(
         *c, hyper['K'])
+    
+    print('A shape = ' + str(prev_model_dict['A'].shape))
+    print('B shape = ' + str(prev_model_dict['B'].shape))
 
     # Draw heatmaps after CP decomposition
     B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(prev_model_dict['B'], 7, 0)

@@ -108,3 +108,8 @@ print(f'New label percentages: {counts / df.shape[0]}')
 
 # Save the new dataset to a pickle file
 df.to_pickle('full_data_with_names.pkl')
+
+# Save player names and their a for reference
+db = df[['a', 'bh_name']]
+
+db.to_csv('player_names_and_ids.csv')
