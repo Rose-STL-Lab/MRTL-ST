@@ -289,7 +289,7 @@ if args.type == 'multi' or args.type == 'fixed':
     print('A shape = ' + str(prev_model_dict['A'].shape))
     print('B shape = ' + str(prev_model_dict['B'].shape))
     print('A_4 shape = ' + str(prev_model_dict['A'][4].shape))
-    print('Product shape = ' + str(np.tensordot(prev_model_dict['A'][4].cpu(), prev_model_dict['B'].cpu(), 0)))
+    print('Product shape = ' + str(np.tensordot(prev_model_dict['A'][4].cpu(), prev_model_dict['B'].cpu(), (0, 2)).shape))
 
     # Draw heatmaps after CP decomposition
     B_1, B_2, B_3, B_4, B_5, B_6, B_7 = torch.chunk(prev_model_dict['B'], 7, 0)
