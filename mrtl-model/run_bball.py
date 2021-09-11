@@ -351,6 +351,11 @@ if args.type == 'multi' or args.type == 'fixed':
                           "full_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
+    curry_heatmap = np.tensordot(prev_model_dict['A'][4].cpu(), prev_model_dict['B'].cpu(), (0, 2))[8:16]
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+    plot.player_latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
 
 # Low-rank first resolution
 b = results['dims'][results['low_start_idx']][0]

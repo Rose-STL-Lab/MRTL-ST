@@ -314,3 +314,38 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
         plt.savefig(fp_fig)
         plt.close()
     return fig
+
+def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
+    if draw_court:
+        X = finegrain(X, [40, 50], 0)
+
+    shape = X.shape
+
+    if normalize:
+        if draw_court:
+            scaler = MinMaxScaler(feature_range=(-1, 1))
+        else:
+            scaler = MinMaxScaler(feature_range=(-1, 1))
+        X = scaler.fit_transform(X.view(-1, shape[-1]).cpu().numpy()).reshape(*shape)
+    else:
+        X = X.cpu().numpy()
+
+    fig = plt.figure(figsize=(12, 8))
+    
+    if draw_court:
+        draw_half_court_left(fig)
+        data = X.transpose()
+        im = fig.imshow(data, cmap=cmap, origin='lower')
+    else:
+        fig.add_patch(Circle((X.shape[0] / 2 - 0.5, X.shape[1] / 6 - 0.5), 0.08 * X.shape[0], ec='k', fc='g'))
+        data = X.transpose()
+        im = fig.imshow(data, cmap=cmap, origin='lower')
+
+    # This affects all axes as share_all = True.
+    fig.axes_llc.set_xticks([])
+    fig.axes_llc.set_yticks([])
+
+    if fp_fig is not None:
+        plt.savefig(fp_fig)
+        plt.close()
+    return fig
