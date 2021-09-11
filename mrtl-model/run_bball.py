@@ -354,7 +354,7 @@ if args.type == 'multi' or args.type == 'fixed':
     curry_heatmap = np.tensordot(prev_model_dict['A'][4].cpu(), prev_model_dict['B'].cpu(), (0, 2))[8:16]
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(B_1, cmap='RdBu_r', draw_court=True,
+    plot.player_latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
