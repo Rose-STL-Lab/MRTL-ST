@@ -316,6 +316,10 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
     return fig
 
 def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
+    shape = X.shape
+    
+    X = X.view((shape, 1))
+    
     if draw_court:
         X = finegrain(X, [40, 50], 0)
 
@@ -330,7 +334,7 @@ def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', f
     else:
         X = X.cpu().numpy()
 
-    fig = plt.figure(figsize=(12, 8))
+    fig = plt.figure()
     
     if draw_court:
         draw_half_court_left(fig)
