@@ -318,7 +318,7 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
 def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
     shape = X.shape
     
-    X = X.view(-1, -1, 1)
+    X = np.reshape(X, (*shape, 1))
     
     if draw_court:
         X = finegrain(X, [40, 50], 0)
