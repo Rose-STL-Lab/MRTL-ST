@@ -316,11 +316,7 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
         plt.close()
     return fig
 
-def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
-    shape = X.shape
-    
-    X = torch.tensor(np.reshape(X, (*shape, 1)))
-    
+def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):        
     if draw_court:
         X = finegrain(X, [40, 50], 0)
 

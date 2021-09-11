@@ -321,7 +321,7 @@ def contract_pos(T, dim):
 def finegrain(T, new_shape, start_dim, mode='nearest'):
     old_shape = T.shape
 
-    assert T.ndim in [3, 5], "T.ndim must be 3 or 5"
+    assert T.ndim in [2, 3, 5], "T.ndim must be 3 or 5"
     assert start_dim in [0, 1, 3], "start_dim must be 0, 1, or 3"
 
     # Calculate scale
@@ -350,6 +350,13 @@ def finegrain(T, new_shape, start_dim, mode='nearest'):
                                                  scale_factor=scale,
                                                  mode=mode)
         new = interp.squeeze().permute(1, 2, 0)
+        
+    elif T.ndim == 2:
+        old = T.clone().detach().unsqueeze(0).unsqueeze(0)
+        interp = torch.nn.functional.interpolate(old,
+                                                 scale_factor=scale,
+                                                 mode=mode)
+        new = interp.squeeze()
 
     return new
 
