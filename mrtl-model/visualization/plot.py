@@ -332,15 +332,16 @@ def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', f
         X = X.cpu().numpy()
 
     fig = plt.figure()
+    ax = fig.add_axes([0, 0, 1, 1])
     
     if draw_court:
-        draw_half_court_left(fig)
+        draw_half_court_left(ax)
         data = X.transpose()
-        im = fig.imshow(data, cmap=cmap, origin='lower')
+        im = ax.imshow(data, cmap=cmap, origin='lower')
     else:
-        fig.add_patch(Circle((X.shape[0] / 2 - 0.5, X.shape[1] / 6 - 0.5), 0.08 * X.shape[0], ec='k', fc='g'))
+        ax.add_patch(Circle((X.shape[0] / 2 - 0.5, X.shape[1] / 6 - 0.5), 0.08 * X.shape[0], ec='k', fc='g'))
         data = X.transpose()
-        im = fig.imshow(data, cmap=cmap, origin='lower')
+        im = ax.imshow(data, cmap=cmap, origin='lower')
 
     # This affects all axes as share_all = True.
     fig.axes_llc.set_xticks([])
