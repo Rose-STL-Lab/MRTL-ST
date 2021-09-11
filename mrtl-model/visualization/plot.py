@@ -2,6 +2,7 @@ import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 from matplotlib.patches import Circle, Rectangle, Arc
 from mpl_toolkits.axes_grid1 import ImageGrid
 from sklearn.preprocessing import MinMaxScaler
@@ -318,7 +319,7 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
 def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=None):
     shape = X.shape
     
-    X = np.reshape(X, (*shape, 1))
+    X = torch.tensor(np.reshape(X, (*shape, 1)))
     
     if draw_court:
         X = finegrain(X, [40, 50], 0)
