@@ -436,6 +436,13 @@ fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
 plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
+curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2))[8:16])
+fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+plot.player_latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
 
 # Bug fix
 b = [b[0]//7, b[1]]
@@ -581,6 +588,14 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
+                               fp_fig=fp_fig)
+    
+    curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2))[8:16])
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+    plot.player_latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     
     # Bug fix
