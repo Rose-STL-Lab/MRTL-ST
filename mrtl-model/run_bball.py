@@ -348,10 +348,11 @@ if args.type == 'multi' or args.type == 'fixed':
                                fp_fig=fp_fig)
     curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
                                               prev_model_dict['B'].cpu(),
-                                              (0, 2))[8:16])
+                                              (0, 2)))
+    P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -438,10 +439,11 @@ plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
                                               prev_model_dict['B'].cpu(),
-                                              (0, 2))[8:16])
+                                              (0, 2)))
+P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
 fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-plot.player_latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Bug fix
@@ -592,10 +594,11 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     
     curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
                                               prev_model_dict['B'].cpu(),
-                                              (0, 2))[8:16])
+                                              (0, 2)))
+    P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     
     # Bug fix
