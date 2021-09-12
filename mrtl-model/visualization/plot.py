@@ -344,8 +344,8 @@ def player_latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', f
         im = ax.imshow(data, cmap=cmap, origin='lower')
 
     # This affects all axes as share_all = True.
-    fig.axes_llc.set_xticks([])
-    fig.axes_llc.set_yticks([])
+    ax.set_xticks([])
+    ax.set_yticks([])
 
     if fp_fig is not None:
         plt.savefig(fp_fig)
