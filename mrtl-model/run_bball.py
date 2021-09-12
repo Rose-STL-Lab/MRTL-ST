@@ -442,7 +442,7 @@ curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
                                               (0, 2)))
 P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
 fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
 plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
@@ -597,7 +597,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
                                               (0, 2)))
     P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
     fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
     plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     
