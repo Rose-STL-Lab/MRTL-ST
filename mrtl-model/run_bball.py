@@ -6,6 +6,7 @@ import os
 
 import torch
 import math
+import numpy as np
 
 import utils
 from config import config
@@ -69,6 +70,9 @@ main_logger = logging.getLogger(config.parent_logger_name)
 utils.set_logger(main_logger, os.path.join(args.root_dir, f"{args.type}.log"))
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+player_a = 4
+style_id = 1
 
 # Results
 results = {
@@ -421,10 +425,6 @@ if args.type == 'multi' or args.type == 'fixed':
         *b, hyper['K'])
     prev_model_dict['C'] = factors[3].clone().detach().view(
         *c, hyper['K'])
-    
-    print("A shape: " + str(prev_model_dict['A'].shape))
-    print("F shape: " + str(prev_model_dict['F'].shape))
-    print("B shape: " + str(prev_model_dict['B'].shape))
 
     # Draw heatmaps after CP decomposition
     fp_fig = os.path.join(fig_dir,
@@ -438,6 +438,20 @@ if args.type == 'multi' or args.type == 'fixed':
     plot.latent_factor_heatmap(prev_model_dict['C'],
                                cmap='RdBu_r',
                                draw_court=False,
+                               fp_fig=fp_fig)
+    player_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][player_a].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2)))
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+    plot.player_latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    playstyle_heatmap = torch.tensor(np.tensordot(prev_model_dict['F'][style_id].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2)))
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Ball-Handling_Guards.png".format(b_str, c_str))
+    plot.player_latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -477,6 +491,20 @@ plot.latent_factor_heatmap(multi.best_model_dict['C'],
                            cmap='RdBu_r',
                            draw_court=False,
                            fp_fig=fp_fig)
+player_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][player_a].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2)))
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+plot.player_latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+playstyle_heatmap = torch.tensor(np.tensordot(prev_model_dict['F'][style_id].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2)))
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Ball-Handling_Guards.png".format(b_str, c_str))
+plot.player_latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
 
 # Test
 # Create dataset
@@ -552,6 +580,20 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     plot.latent_factor_heatmap(multi.best_model_dict['C'],
                                cmap='RdBu_r',
                                draw_court=False,
+                               fp_fig=fp_fig)
+    player_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][player_a].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2)))
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+    plot.player_latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    playstyle_heatmap = torch.tensor(np.tensordot(prev_model_dict['F'][style_id].cpu(),
+                                              prev_model_dict['B'].cpu(),
+                                              (0, 2)))
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Ball-Handling_Guards.png".format(b_str, c_str))
+    plot.player_latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
     # Test
