@@ -272,20 +272,13 @@ if args.type == 'multi' or args.type == 'fixed':
     # Full-rank first resolution
     b = results['dims'][max(math.floor(results['low_start_idx']/2) - 1, 0)][0]
     c = results['dims'][max(math.floor(results['low_start_idx']/2) - 1, 0)][1]
-    # T
-    # t = results['time_dims'][0]
-    # T'
+
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
-    # T
     f_str = str(f)
-    # T'
+    
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
-    # T
-    # train_set.calculate_time(t)
-    # val_set.calculate_time(t)
-    # T'
 
     # Train
     multi = BasketballMulti(device)
@@ -300,9 +293,7 @@ if args.type == 'multi' or args.type == 'fixed':
     # Test
     # Create dataset
     test_set.calculate_pos(b, c)
-    # T
-    # test_set.calculate_time(t)
-    # T'
+
     multi.model.load_state_dict(multi.best_model_dict)
     test_conf_matrix, test_acc, test_precision, test_recall, test_F1, test_out, test_labels = multi.test(
         test_set)
@@ -430,6 +421,10 @@ if args.type == 'multi' or args.type == 'fixed':
         *b, hyper['K'])
     prev_model_dict['C'] = factors[3].clone().detach().view(
         *c, hyper['K'])
+    
+    print("A shape: " + str(prev_model_dict['A'].shape))
+    print("F shape: " + str(prev_model_dict['F'].shape))
+    print("B shape: " + str(prev_model_dict['B'].shape))
 
     # Draw heatmaps after CP decomposition
     fp_fig = os.path.join(fig_dir,
@@ -444,7 +439,6 @@ if args.type == 'multi' or args.type == 'fixed':
                                cmap='RdBu_r',
                                draw_court=False,
                                fp_fig=fp_fig)
-    print('made it here bruh')
 
 # Low-rank first resolution
 b = results['dims'][results['low_start_idx']][0]
