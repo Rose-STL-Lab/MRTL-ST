@@ -318,13 +318,12 @@ def remove_season(data, standardize=True, mean=None, std=None):
     return data, mean, std
 
 # Reorders heatmaps based on values that define priority for playstyle/player
-def reorder_weighted_heatmaps(heatmaps, values):
+def reorder_weighted_heatmaps(values, heatmaps):
     # Weights heatmaps
     weighted_heatmaps = torch.mul(values, heatmaps)
     
     # Reorders heatmaps based on values
-    indices, sorted_values = torch.sort(values, descending=True)
-    print(indices)
+    sorted_values, indices = torch.sort(values, descending=True)
     reordered_heatmaps = torch.index_select(weighted_heatmaps, 2, indices)
     
     # Returns reordered heatmaps
