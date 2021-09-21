@@ -442,7 +442,7 @@ if args.type == 'multi' or args.type == 'fixed':
                                                         prev_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_style.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     player_style_values = torch.mul(prev_model_dict['A'][player_a],
                                         prev_model_dict['F'][style_id])
@@ -450,7 +450,7 @@ if args.type == 'multi' or args.type == 'fixed':
                                                         prev_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_B_heatmap_player_style.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(player_style_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(player_style_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
