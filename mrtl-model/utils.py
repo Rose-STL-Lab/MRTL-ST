@@ -183,7 +183,7 @@ def contract_pos(T, dim):
 def finegrain(T, new_shape, start_dim, mode='nearest'):
     old_shape = T.shape
 
-    assert T.ndim in [2, 3, 6], "T.ndim must be 2, 3 or 6"
+    assert T.ndim in [3, 6], "T.ndim must be 3 or 6"
     assert start_dim in [0, 2, 4], "start_dim must be 0, 2, or 4"
 
     # Calculate scale
@@ -212,13 +212,6 @@ def finegrain(T, new_shape, start_dim, mode='nearest'):
                                                  scale_factor=scale,
                                                  mode=mode)
         new = interp.squeeze().permute(1, 2, 0)
-        
-    elif T.ndim == 2:
-        old = T.clone().detach().unsqueeze(0).unsqueeze(0)
-        interp = torch.nn.functional.interpolate(old,
-                                                 scale_factor=scale,
-                                                 mode=mode)
-        new = interp.squeeze()
 
     return new
 
@@ -324,21 +317,17 @@ def remove_season(data, standardize=True, mean=None, std=None):
 
     return data, mean, std
 
-# Calculates the distance between (x,y) and (xRef,yRef)
-def calculate_distance(x, y, xRef, yRef):
-    # Applies the Pythagorean Theorem to find the distance between the two points
-    dist = np.sqrt(np.power(x - xRef, 2) + np.power(y - yRef, 2))
-    return dist     # Returns the calculated distance
-
-# Calculates the angle between (x,y) and (xRef,yRef). 0º for the right corner,
-# 90º for the front of the basket, 180º for the left corner.
-def calculate_angle(x, y, xRef, yRef):
-    # Calculates the distance
-    dist = calculate_distance(x, y, xRef, yRef)
-
-    # yRef - y = dist * cos(angle)
-    angle = np.arccos((yRef - y)/dist)
-    return angle    # Returns the calculated angle
+# Reorders heatmaps based on values that define priority for playstyle/player
+def reorder_weighted_heatmaps(heatmaps, values):
+    # Weights heatmaps
+    weighted_heatmaps = torch.mul(values, heatmaps)
+    
+    # Reorders heatmaps based on values
+    indices, sorted_values = torch.sort(values, descending=True)
+    reordered_heatmaps = torch.index_select(weighted_heatmaps, 2, indices)
+    
+    # Returns reordered heatmaps
+    return reordered_heatmaps
 
 def normalize(data,
               old_min=None,
