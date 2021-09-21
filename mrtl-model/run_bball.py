@@ -124,7 +124,6 @@ test_set = BballRawDataset(os.path.join(args.data_dir, config.fn_test))
 
 if args.type == 'multi' or args.type == 'fixed':
     
-#   for t in results['time_dims'][0:results['low_start_time_idx']]:
     f = results['style_dims'][0]
     
     train_set.calculate_style(f)
@@ -136,20 +135,12 @@ if args.type == 'multi' or args.type == 'fixed':
     # Full-rank first resolution
     b = results['dims'][0][0]
     c = results['dims'][0][1]
-    # T
-    # t = results['time_dims'][0]
-    # T'
+
     b_str = utils.size_to_str(b)
     c_str = utils.size_to_str(c)
-    # T
     f_str = str(f)
-    # T'
     train_set.calculate_pos(b, c)
     val_set.calculate_pos(b, c)
-    # T
-    # train_set.calculate_time(t)
-    # val_set.calculate_time(t)
-    # T'
 
     # Train
     multi = BasketballMulti(device)
@@ -425,6 +416,10 @@ if args.type == 'multi' or args.type == 'fixed':
         *b, hyper['K'])
     prev_model_dict['C'] = factors[3].clone().detach().view(
         *c, hyper['K'])
+    
+    print("Product shape (0): " + str(np.tensordot(prev_model_dict['F'][style_id].cpu(), prev_model_dict['B'].cpu(), 0)))
+    print("Product shape (1): " + str(np.tensordot(prev_model_dict['F'][style_id].cpu(), prev_model_dict['B'].cpu(), (0, 1))))
+    print("Product shape (2): " + str(np.tensordot(prev_model_dict['F'][style_id].cpu(), prev_model_dict['B'].cpu(), (0, 2))))
 
     # Draw heatmaps after CP decomposition
     fp_fig = os.path.join(fig_dir,
