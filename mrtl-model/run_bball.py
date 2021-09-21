@@ -512,50 +512,50 @@ plot.latent_factor_heatmap(multi.best_model_dict['C'],
                            cmap='RdBu_r',
                            draw_court=False,
                            fp_fig=fp_fig)
-player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_a], prev_model_dict[
-                                                    'B'])
+player_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['A'][
+                                                    player_a],
+                                                    multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                      "low_{0},{1}_B_heatmap_player.png".format(b_str, c_str))
 plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
                           fp_fig=fp_fig)
-playstyle_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['F'][
+playstyle_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['F'][
                                                         style_id],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                      "low_{0},{1}_B_heatmap_style.png".format(b_str, c_str))
 plot.latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                           fp_fig=fp_fig)
-player_style_values = torch.mul(prev_model_dict['A'][player_a],
-                                    prev_model_dict['F'][style_id])
+player_style_values = torch.mul(multi.best_model_dict['A'][player_a],
+                                    multi.best_model_dict['F'][style_id])
 player_style_heatmap = utils.reorder_weighted_heatmaps(player_style_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                      "low_{0},{1}_B_heatmap_player_style.png".format(b_str, c_str))
 plot.latent_factor_heatmap(player_style_heatmap, cmap='RdBu_r', draw_court=True,
                            fp_fig=fp_fig)
-player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_a], prev_model_dict[
-                                                    'C'])
+player_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['A'][
+                                                    player_a],
+                                                    multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
                      "low_{0},{1}_C_heatmap_player.png".format(b_str, c_str))
 plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
-playstyle_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['F'][
+playstyle_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['F'][
                                                         style_id],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
                      "low_{0},{1}_C_heatmap_style.png".format(b_str, c_str))
 plot.latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                            fp_fig=fp_fig)
-player_style_values = torch.mul(prev_model_dict['A'][player_a],
-                                        prev_model_dict['F'][style_id])
+player_style_values = torch.mul(multi.best_model_dict['A'][player_a],
+                                        multi.best_model_dict['F'][style_id])
 player_style_heatmap = utils.reorder_weighted_heatmaps(player_style_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_C_heatmap_player_style.png".format(b_str, c_str))
+                     "low_{0},{1}_C_heatmap_player_style.png".format(b_str, c_str))
 plot.latent_factor_heatmap(player_style_heatmap, cmap='RdBu_r', draw_court=True,
-                               fp_fig=fp_fig)
+                           fp_fig=fp_fig)
 
 # Test
 # Create dataset
@@ -632,49 +632,49 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
                                cmap='RdBu_r',
                                draw_court=False,
                                fp_fig=fp_fig)
-    player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_a], prev_model_dict[
+    player_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['A'][
+                                                    player_a], multi.best_model_dict[
                                                     'B'])
     fp_fig = os.path.join(fig_dir,
                          "low_{0},{1}_B_heatmap_player.png".format(b_str, c_str))
     plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
                               fp_fig=fp_fig)
-    playstyle_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['F'][
+    playstyle_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['F'][
                                                             style_id],
-                                                            prev_model_dict[
+                                                            multi.best_model_dict[
                                                             'B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_style.png".format(b_str, c_str))
     plot.latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
-    player_style_values = torch.mul(prev_model_dict['A'][player_a],
-                                        prev_model_dict['F'][style_id])
+    player_style_values = torch.mul(multi.best_model_dict['A'][player_a],
+                                        multi.best_model_dict['F'][style_id])
     player_style_heatmap = utils.reorder_weighted_heatmaps(player_style_values,
-                                                               prev_model_dict[
+                                                               multi.best_model_dict[
                                                                    'B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_style.png".format(b_str, c_str))
     plot.latent_factor_heatmap(player_style_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
-    player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
+    player_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['A'][
                                                         player_a],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player.png".format(b_str, c_str))
     plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
-    playstyle_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['F'][
+    playstyle_heatmap = utils.reorder_weighted_heatmaps(multi.best_model_dict['F'][
                                                             style_id],
-                                                            prev_model_dict[
+                                                            multi.best_model_dict[
                                                             'C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_style.png".format(b_str, c_str))
     plot.latent_factor_heatmap(playstyle_heatmap, cmap='RdBu_r', draw_court=True,
                            fp_fig=fp_fig)
-    player_style_values = torch.mul(prev_model_dict['A'][player_a],
-                                        prev_model_dict['F'][style_id])
+    player_style_values = torch.mul(multi.best_model_dict['A'][player_a],
+                                        multi.best_model_dict['F'][style_id])
     player_style_heatmap = utils.reorder_weighted_heatmaps(player_style_values,
-                                                               prev_model_dict[
+                                                               multi.best_model_dict[
                                                                    'C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_style.png".format(b_str, c_str))
