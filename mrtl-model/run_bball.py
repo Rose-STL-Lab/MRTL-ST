@@ -416,6 +416,9 @@ if args.type == 'multi' or args.type == 'fixed':
         *b, hyper['K'])
     prev_model_dict['C'] = factors[3].clone().detach().view(
         *c, hyper['K'])
+    
+    print('Product shape: ' + str(torch.mul(prev_model_dict['A'][player_a],
+                                        prev_model_dict['F'][style_id])).shape)
 
     # Draw heatmaps after CP decomposition
     fp_fig = os.path.join(fig_dir,
