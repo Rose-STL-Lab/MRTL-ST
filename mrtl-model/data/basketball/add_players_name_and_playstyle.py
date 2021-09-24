@@ -101,6 +101,10 @@ df = df[df['playstyle_name'] != 'undefined']
 # Reassign player IDs
 df['a'], uniques = pd.factorize(df['bh_name'])
 
+# Save player names and their IDs to a csv file
+players_ids = df['bh_name', 'a']
+players_ids.to_csv('players_a.csv')
+
 # Logging purposes
 print(f'New Shape: {df.shape}')
 _, counts = np.unique(df['shoot_label'], return_counts=True)

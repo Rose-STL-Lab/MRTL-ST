@@ -323,7 +323,7 @@ def reorder_weighted_heatmaps(values, heatmaps):
     weighted_heatmaps = torch.mul(values, heatmaps)
     
     # Reorders heatmaps based on values
-    sorted_values, indices = torch.sort(values, descending=True)
+    sorted_values, indices = torch.sort(torch.abs(values), descending=True)
     reordered_heatmaps = torch.index_select(weighted_heatmaps, 2, indices)
     
     # Returns reordered heatmaps
