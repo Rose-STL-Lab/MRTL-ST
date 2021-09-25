@@ -102,7 +102,7 @@ df = df[df['playstyle_name'] != 'undefined']
 df['a'], uniques = pd.factorize(df['bh_name'])
 
 # Save player names and their IDs to a csv file
-players_ids = df['bh_name', 'a']
+players_ids = df[['bh_name', 'a']]
 players_ids.to_csv('players_a.csv')
 
 # Logging purposes
