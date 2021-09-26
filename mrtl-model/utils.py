@@ -301,6 +301,8 @@ def reorder_weighted_heatmaps(values, heatmaps):
     # Reorders heatmaps based on values
     sorted_values, indices = torch.sort(torch.abs(values), descending=True)
     reordered_heatmaps = torch.index_select(weighted_heatmaps, 2, indices)
+    
+    return reordered_heatmaps
 
 def class_counts(dataset):
     _, counts = np.unique(dataset.y, return_counts=True)
