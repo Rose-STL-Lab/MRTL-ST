@@ -359,12 +359,12 @@ if args.type == 'multi' or args.type == 'fixed':
     curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], C_2)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_Curry.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], C_4)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_Green.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -462,12 +462,12 @@ plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
 curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], C_2)
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_Curry.png".format(b_str, c_str))
-plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], C_4)
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_Green.png".format(b_str, c_str))
-plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
+plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
 # Bug fix
@@ -629,12 +629,12 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], C_2)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_Curry.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], C_4)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_Green.png".format(b_str, c_str))
-    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     
     # Bug fix
