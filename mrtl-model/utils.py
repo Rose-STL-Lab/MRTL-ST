@@ -206,17 +206,13 @@ def finegrain(T, new_shape, start_dim, mode='nearest'):
                           old_shape[7 - start_dim],
                           *new_shape).permute(0, 1, 6 - start_dim, 7 - start_dim,
                                               start_dim, start_dim + 1)
-    elif T.ndim == 3:
-        print("came here to finegrain")
-        
-        
+    elif T.ndim == 3:        
         old = T.clone().detach().permute(2, 0, 1).unsqueeze(0)
         interp = torch.nn.functional.interpolate(old,
                                                  scale_factor=scale,
                                                  mode=mode)
         new = interp.squeeze().permute(1, 2, 0)
-        print("old", old.shape)
-        print("new", new.shape)
+
     return new
 
 def finegrain_time_full(T, new_time_dim, mode='nearest'):

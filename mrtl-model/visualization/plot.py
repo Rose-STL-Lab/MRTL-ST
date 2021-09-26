@@ -292,4 +292,5 @@ def latent_factor_heatmap(X, draw_court, normalize=True, cmap='RdBu_r', fp_fig=N
 
     if fp_fig is not None:
         plt.savefig(fp_fig)
+    plt.close(fig)
     return fig

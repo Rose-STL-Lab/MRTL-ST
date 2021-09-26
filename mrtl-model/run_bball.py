@@ -617,49 +617,49 @@ plot.latent_factor_heatmap(multi.best_model_dict['C'],
                            fp_fig=fp_fig)
 
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][0],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_1.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][1],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_2.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][2],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_3.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][3],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_4.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][0],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_1.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][1],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_2.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][2],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_3.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][3],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_4.png".format(b_str, c_str))
 plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -669,15 +669,15 @@ for i in range(len(player_ids)):
     player_id = player_ids[i]
         
     player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_id], prev_model_dict[
-                                                    'B'])
+                                                    player_id],
+                                                    multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_id], prev_model_dict[
-                                                    'C'])
+                                                    player_id],
+                                                    multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
@@ -686,7 +686,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][0])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -694,7 +694,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][1])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -702,7 +702,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][2])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -710,7 +710,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                           prev_model_dict['T'][3])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -718,7 +718,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][0])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -726,7 +726,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][1])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -734,7 +734,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][2])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -742,7 +742,7 @@ for i in range(len(player_ids)):
     player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][3])
     player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
     plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -824,49 +824,49 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
                                draw_court=False,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][0],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][1],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_2.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][2],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_3.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][3],
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_quarter_4.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][0],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][1],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_2.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][2],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_3.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     quarter_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['T'][3],
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_quarter_4.png".format(b_str, c_str))
     plot.latent_factor_heatmap(quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -876,15 +876,15 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_id = player_ids[i]
         
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_id], prev_model_dict[
-                                                    'B'])
+                                                    player_id],
+                                                    multi.best_model_dict['B'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][
-                                                    player_id], prev_model_dict[
-                                                    'C'])
+                                                    player_id],
+                                                    multi.best_model_dict['C'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
@@ -893,7 +893,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][0])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -901,7 +901,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][1])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -909,7 +909,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][2])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -917,7 +917,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][3])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['B'])
+                                                        multi.best_model_dict['B'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=True,
@@ -925,7 +925,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][0])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -933,7 +933,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][1])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -941,7 +941,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][2])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
@@ -949,7 +949,7 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_quarter_values = torch.mul(prev_model_dict['A'][player_id],
                                         prev_model_dict['T'][3])
         player_quarter_heatmap = utils.reorder_weighted_heatmaps(player_quarter_values,
-                                                        prev_model_dict['C'])
+                                                        multi.best_model_dict['C'])
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
         plot.latent_factor_heatmap(player_quarter_heatmap, cmap='RdBu_r', draw_court=False,
