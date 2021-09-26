@@ -293,6 +293,15 @@ def bball_spatial_regularizer(model, K_B, K_C, device):
 
     return reg
 
+# Reorders heatmaps based on values that define priority for player
+def reorder_weighted_heatmaps(values, heatmaps):
+    # Weights heatmaps
+    weighted_heatmaps = torch.mul(values, heatmaps)
+    
+    # Reorders heatmaps based on values
+    sorted_values, indices = torch.sort(torch.abs(values), descending=True)
+    reordered_heatmaps = torch.index_select(weighted_heatmaps, 2, indices)
+
 def class_counts(dataset):
     _, counts = np.unique(dataset.y, return_counts=True)
     return counts

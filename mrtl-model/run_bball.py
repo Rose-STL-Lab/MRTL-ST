@@ -318,6 +318,16 @@ if args.type == 'multi' or args.type == 'fixed':
                           "full_{0},{1}_B_heatmap_7.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_7, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
+    curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], B_2)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], B_4)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_B_heatmap_Green.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
@@ -346,13 +356,15 @@ if args.type == 'multi' or args.type == 'fixed':
                           "full_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
-    curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
-                                              prev_model_dict['B'].cpu(),
-                                              (0, 2)))
-    P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
+    curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], C_2)
     fp_fig = os.path.join(fig_dir,
-                          "full_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
+                          "full_{0},{1}_C_heatmap_Curry.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], C_4)
+    fp_fig = os.path.join(fig_dir,
+                          "full_{0},{1}_C_heatmap_Green.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -409,6 +421,16 @@ fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_B_heatmap_7.png".format(b_str, c_str))
 plot.latent_factor_heatmap(B_7, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
+curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], B_2)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], B_4)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Green.png".format(b_str, c_str))
+plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
 fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
 plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
@@ -437,13 +459,15 @@ fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_7.png".format(b_str, c_str))
 plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
-curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
-                                              prev_model_dict['B'].cpu(),
-                                              (0, 2)))
-P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
+curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], C_2)
 fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
+                          "low_{0},{1}_C_heatmap_Curry.png".format(b_str, c_str))
+plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], C_4)
+fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_Green.png".format(b_str, c_str))
+plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
 
 # Bug fix
@@ -563,6 +587,16 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
                           "low_{0},{1}_B_heatmap_7.png".format(b_str, c_str))
     plot.latent_factor_heatmap(B_7, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
+    curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], B_2)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], B_4)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_B_heatmap_Green.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_1.png".format(b_str, c_str))
     plot.latent_factor_heatmap(C_1, cmap='RdBu_r', draw_court=False,
@@ -592,13 +626,15 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
     plot.latent_factor_heatmap(C_7, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     
-    curry_heatmap = torch.tensor(np.tensordot(prev_model_dict['A'][4].cpu(),
-                                              prev_model_dict['B'].cpu(),
-                                              (0, 2)))
-    P_1, P_2, P_3, P_4, P_5, P_6, P_7 = torch.chunk(curry_heatmap, 7, 0)
+    curry_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][4], C_2)
     fp_fig = os.path.join(fig_dir,
-                          "low_{0},{1}_B_heatmap_Curry.png".format(b_str, c_str))
-    plot.player_latent_factor_heatmap(P_2, cmap='RdBu_r', draw_court=True,
+                          "low_{0},{1}_C_heatmap_Curry.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(curry_heatmap, cmap='RdBu_r', draw_court=True,
+                               fp_fig=fp_fig)
+    green_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][22], C_4)
+    fp_fig = os.path.join(fig_dir,
+                          "low_{0},{1}_C_heatmap_Green.png".format(b_str, c_str))
+    plot.latent_factor_heatmap(green_heatmap, cmap='RdBu_r', draw_court=True,
                                fp_fig=fp_fig)
     
     # Bug fix
