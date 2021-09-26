@@ -404,21 +404,17 @@ def remove_season(data, standardize=True, mean=None, std=None):
 
     return data, mean, std
 
-# Calculates the distance between (x,y) and (xRef,yRef)
-def calculate_distance(x, y, xRef, yRef):
-    # Applies the Pythagorean Theorem to find the distance between the two points
-    dist = np.sqrt(np.power(x - xRef, 2) + np.power(y - yRef, 2))
-    return dist     # Returns the calculated distance
-
-# Calculates the angle between (x,y) and (xRef,yRef). 0º for the right corner,
-# 90º for the front of the basket, 180º for the left corner.
-def calculate_angle(x, y, xRef, yRef):
-    # Calculates the distance
-    dist = calculate_distance(x, y, xRef, yRef)
-
-    # yRef - y = dist * cos(angle)
-    angle = np.arccos((yRef - y)/dist)
-    return angle    # Returns the calculated angle
+# Reorders heatmaps based on values that define priority for playstyle/player
+def reorder_weighted_heatmaps(values, heatmaps):
+    # Weights heatmaps
+    weighted_heatmaps = torch.mul(values, heatmaps)
+    
+    # Reorders heatmaps based on values
+    sorted_values, indices = torch.sort(torch.abs(values), descending=True)
+    reordered_heatmaps = torch.index_select(weighted_heatmaps, 2, indices)
+    
+    # Returns reordered heatmaps
+    return reordered_heatmaps
 
 def normalize(data,
               old_min=None,
