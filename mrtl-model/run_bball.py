@@ -460,22 +460,22 @@ if args.type == 'multi' or args.type == 'fixed':
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_1)
         fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_2)
         fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_3)
         fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_4)
         fp_fig = os.path.join(fig_dir,
                           "full_{0},{1}_C_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
 # Low-rank first resolution
@@ -677,22 +677,22 @@ for i in range(len(player_ids)):
     player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_1)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
-    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_2)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
-    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_3)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
-    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_4)
     fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
-    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+    plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
 
 # Bug fix
@@ -951,22 +951,22 @@ for b, c in results['dims'][results['low_start_idx'] + 1:]:
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_1)
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_1.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_2)
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_2.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_3)
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_3.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
         player_heatmap = utils.reorder_weighted_heatmaps(prev_model_dict['A'][player_id], C_4)
         fp_fig = os.path.join(fig_dir,
                           "low_{0},{1}_C_heatmap_player_{2}_quarter_4.png".format(b_str, c_str, i+1))
-        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=True,
+        plot.latent_factor_heatmap(player_heatmap, cmap='RdBu_r', draw_court=False,
                                fp_fig=fp_fig)
     
     # Bug fix
