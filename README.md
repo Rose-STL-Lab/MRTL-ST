@@ -34,8 +34,8 @@ Step 2:
 Compile the .json files into a .pkl file by running `new_read_raw.py`:
 
 python new_read_raw.py \
-    --input-dir $INPUT_DIR \ # location of the .json files
-    --output-dir $OUTPUT_DIR \ # desired location of the .pkl file
+    --input-dir $INPUT_DIR \
+    --output-dir $OUTPUT_DIR
 
 ## Pre-Processing
 
@@ -47,7 +47,7 @@ Run `prepare_bball.py` to create the training dataset and set miscellaneous para
 
 python prepare_bball.py \
     --root-dir $RUN_DIR \
-    -data-dir $DATA_DIR
+    --data-dir $DATA_DIR
     
 Step 2:
 Run `run_bball_stop_cond.sh` (can be found `src/`) in with arguments to run a single experiment. This bash file is a helper script that runs `run_bball.py` with preset parameters.
